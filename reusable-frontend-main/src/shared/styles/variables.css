@@ -1,0 +1,47 @@
+:root {
+
+  --background: 255 255 255;
+
+  --foreground: 15 23 42;
+
+
+  --primary: 37 99 235;
+
+  --secondary: 71 85 105;
+
+
+  --success: 22 163 74;
+
+  --warning: 245 158 11;
+
+  --danger: 220 38 38;
+
+
+  --border: 226 232 240;
+
+
+  --radius-sm: 0.25rem;
+
+  --radius-md: 0.5rem;
+
+  --radius-lg: 1rem;
+
+}
+
+
+
+.dark {
+
+  --background: 15 23 42;
+
+  --foreground: 248 250 252;
+
+
+  --primary: 59 130 246;
+
+  --secondary: 148 163 184;
+
+
+  --border: 51 65 85;
+
+}

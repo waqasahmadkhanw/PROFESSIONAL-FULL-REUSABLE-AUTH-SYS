@@ -1,0 +1,222 @@
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.208.106.182:3000
+✓ Ready in 10.6s
+Creating turbopack project {
+  dir: 'C:\\Users\\WaqasAhmad\\Pictures\\final\\Allu\\TEM4\\good\\mern-frontend-v7',
+  testMode: true
+}
+
+○ Compiling /login ...
+ GET /login 200 in 51s (next.js: 48s, application-code: 2.4s)
+✓ Finished filesystem cache database compaction in 13.0s
+ GET / 200 in 600ms (next.js: 211ms, application-code: 389ms)
+ GET /register 200 in 1003ms (next.js: 519ms, application-code: 484ms)
+○ Compiling /forgot-password ...
+ GET /forgot-password 200 in 25.5s (next.js: 24.9s, application-code: 604ms)
+○ Compiling /_not-found/page ...
+ GET /dashboard 404 in 3.7s (next.js: 3.4s, application-code: 259ms)
+○ Compiling /admin ...
+ GET /admin 200 in 30.4s (next.js: 29.9s, application-code: 492ms)
+✓ Finished filesystem cache database compaction in 11.8s
+○ Compiling /profile ...
+ GET /profile 200 in 48s (next.js: 45s, application-code: 3.2s)
+○ Compiling /change-password ...
+✓ Finished writing to filesystem cache in 21.3s
+ GET /change-password 200 in 30.4s (next.js: 30.0s, application-code: 481ms)
+○ Compiling /reset-password ...
+ GET /reset-password 200 in 13.5s (next.js: 13.1s, application-code: 398ms)
+✓ Finished writing to filesystem cache in 10.3s
+✓ Finished filesystem cache database compaction in 14.2s
+✓ Finished filesystem cache database compaction in 48s
+○ Compiling /dashboard ...
+✓ Finished writing to filesystem cache in 19.3s
+✓ Finished writing to filesystem cache in 51s
+ GET /dashboard 200 in 4.3s (next.js: 3.4s, application-code: 907ms)
+✓ Finished filesystem cache database compaction in 88s
+ GET /profile 200 in 6.6s (next.js: 4.6s, application-code: 1958ms)
+ GET /change-password 200 in 3.0s (next.js: 846ms, application-code: 2.1s)
+ GET /reset-password 200 in 4.9s (next.js: 3.0s, application-code: 1808ms)
+ GET /admin 200 in 4.2s (next.js: 2.0s, application-code: 2.2s)
+✓ Finished filesystem cache database compaction in 94s
+✓ Finished writing to filesystem cache in 14.9s
+✓ Finished filesystem cache database compaction in 44s
+ GET /login?registered=1 200 in 32.9s (next.js: 13.8s, application-code: 19.1s)
+○ Compiling /manifest.webmanifest ...
+ GET /manifest.webmanifest 200 in 13.9s (next.js: 13.0s, application-code: 909ms)
+ GET /register 200 in 5.1s (next.js: 4.2s, application-code: 908ms)
+ GET /manifest.webmanifest 200 in 56ms (next.js: 34ms, application-code: 23ms)
+ GET /login?registered=1 200 in 776ms (next.js: 48ms, application-code: 728ms)
+ GET /manifest.webmanifest 200 in 256ms (next.js: 236ms, application-code: 20ms)
+✓ Finished writing to filesystem cache in 11.5s
+✓ Finished writing to filesystem cache in 19.7s
+✓ Finished filesystem cache database compaction in 52s
+✓ Finished writing to filesystem cache in 180.2min
+✓ Finished writing to filesystem cache in 10.9s
+✓ Finished writing to filesystem cache in 3.9min
+✓ Finished writing to filesystem cache in 11.4s
+ GET /instructor/certificates 404 in 55s (next.js: 33.5s, application-code: 22.0s)
+ GET /login?registered=1 200 in 3.4s (next.js: 1159ms, application-code: 2.2s)
+ GET /login?registered=1 200 in 797ms (next.js: 102ms, application-code: 695ms)
+ GET /manifest.webmanifest 200 in 995ms (next.js: 809ms, application-code: 186ms)
+ GET /register 200 in 1697ms (next.js: 879ms, application-code: 817ms)
+ GET /manifest.webmanifest 200 in 142ms (next.js: 11ms, application-code: 131ms)
+ GET /login?registered=1 200 in 366ms (next.js: 23ms, application-code: 343ms)
+ GET /manifest.webmanifest 200 in 29ms (next.js: 8ms, application-code: 21ms)
+ GET /dashboard 200 in 46s (next.js: 44s, application-code: 1711ms)
+ GET /dashboard 200 in 47s (next.js: 47s, application-code: 435ms)
+ GET /manifest.webmanifest 200 in 133ms (next.js: 9ms, application-code: 125ms)
+ GET /admin 200 in 8.1s (next.js: 7.4s, application-code: 632ms)
+ GET /manifest.webmanifest 200 in 4.2s (next.js: 4.2s, application-code: 23ms)
+✓ Finished writing to filesystem cache in 38.2s
+○ Compiling /admin/users ...
+✓ Finished writing to filesystem cache in 2.5min
+✓ Finished filesystem cache database compaction in 6.4min
+✓ Finished writing to filesystem cache in 53s
+✓ Finished writing to filesystem cache in 19.0s
+✓ Finished writing to filesystem cache in 17.3s
+✓ Finished writing to filesystem cache in 16.4s
+✓ Finished writing to filesystem cache in 35.5s
+ GET /admin/users 200 in 20.5min (next.js: 20.5min, application-code: 2.7s)
+ GET /manifest.webmanifest 200 in 1176ms (next.js: 1094ms, application-code: 81ms)
+✓ Finished writing to filesystem cache in 39.7s
+ GET /admin/users 200 in 116ms (next.js: 18ms, application-code: 98ms)
+✓ Finished writing to filesystem cache in 11.0s
+ GET /admin/users 200 in 680ms (next.js: 16ms, application-code: 665ms)
+ GET /manifest.webmanifest 200 in 138ms (next.js: 116ms, application-code: 22ms)
+ GET /admin/users 200 in 62s (next.js: 16ms, application-code: 62s)
+ GET /manifest.webmanifest 200 in 25ms (next.js: 7ms, application-code: 18ms)
+✓ Finished filesystem cache database compaction in 96s
+✓ Finished filesystem cache database compaction in 2.1min
+○ Compiling /admin/roles ...
+ GET /admin/roles 200 in 116s (next.js: 115s, application-code: 443ms)
+ GET /manifest.webmanifest 200 in 1827ms (next.js: 1525ms, application-code: 303ms)
+✓ Finished writing to filesystem cache in 18.0s
+○ Compiling /admin/announcements ...
+ GET /admin/announcements 200 in 45s (next.js: 44s, application-code: 484ms)
+ GET /manifest.webmanifest 200 in 30ms (next.js: 11ms, application-code: 19ms)
+✓ Finished writing to filesystem cache in 14.3s
+✓ Finished filesystem cache database compaction in 20.8s
+○ Compiling /admin/events ...
+✓ Finished filesystem cache database compaction in 47s
+ GET /admin/events 200 in 29.6s (next.js: 28.9s, application-code: 672ms)
+ GET /manifest.webmanifest 200 in 84ms (next.js: 53ms, application-code: 32ms)
+○ Compiling /admin/coupons ...
+✓ Finished writing to filesystem cache in 16.5s
+ GET /admin/coupons 200 in 51s (next.js: 50s, application-code: 1247ms)
+ GET /manifest.webmanifest 200 in 24ms (next.js: 8ms, application-code: 15ms)
+✓ Finished writing to filesystem cache in 18.1s
+✓ Finished filesystem cache database compaction in 65s
+✓ Finished filesystem cache database compaction in 75s
+ GET /admin/coupons 200 in 870ms (next.js: 79ms, application-code: 791ms)
+ GET /manifest.webmanifest 200 in 35ms (next.js: 14ms, application-code: 21ms)
+ GET /admin/coupons 200 in 648ms (next.js: 129ms, application-code: 519ms)
+ GET /admin/coupons 200 in 785ms (next.js: 63ms, application-code: 722ms)
+ GET /manifest.webmanifest 200 in 415ms (next.js: 390ms, application-code: 25ms)
+○ Compiling /admin/orders ...
+ GET /admin/orders 200 in 62s (next.js: 61s, application-code: 918ms)
+ GET /manifest.webmanifest 200 in 47ms (next.js: 15ms, application-code: 32ms)
+○ Compiling /admin/notifications ...
+✓ Finished writing to filesystem cache in 22.4s
+ GET /admin/notifications 200 in 82s (next.js: 82s, application-code: 389ms)
+ GET /manifest.webmanifest 200 in 30ms (next.js: 10ms, application-code: 19ms)
+✓ Finished writing to filesystem cache in 13.9s
+○ Compiling /admin/media ...
+ GET /admin/media 200 in 77s (next.js: 76s, application-code: 1736ms)
+ GET /manifest.webmanifest 200 in 32ms (next.js: 15ms, application-code: 17ms)
+✓ Finished writing to filesystem cache in 11.1s
+✓ Finished filesystem cache database compaction in 26.1s
+✓ Finished filesystem cache database compaction in 27.3s
+○ Compiling /admin/payments ...
+ GET /admin/payments 200 in 2.7min (next.js: 2.7min, application-code: 652ms)
+✓ Finished writing to filesystem cache in 35.4s
+ GET /manifest.webmanifest 200 in 811ms (next.js: 235ms, application-code: 576ms)
+ GET /admin/payments 200 in 1510ms (next.js: 484ms, application-code: 1026ms)
+ GET /manifest.webmanifest 200 in 35ms (next.js: 11ms, application-code: 24ms)
+✓ Finished writing to filesystem cache in 10.7s
+○ Compiling /admin/audit-logs ...
+✓ Finished filesystem cache database compaction in 120s
+ GET /admin/audit-logs 200 in 3.3min (next.js: 3.3min, application-code: 743ms)
+ GET /manifest.webmanifest 200 in 51ms (next.js: 28ms, application-code: 23ms)
+✓ Finished filesystem cache database compaction in 3.9min
+✓ Finished writing to filesystem cache in 23.0s
+✓ Finished filesystem cache database compaction in 51s
+✓ Finished filesystem cache database compaction in 53s
+○ Compiling /admin/settings ...
+ GET /admin/settings 200 in 2.6min (next.js: 2.5min, application-code: 1922ms)
+ GET /manifest.webmanifest 200 in 4.9s (next.js: 4.9s, application-code: 15ms)
+✓ Finished writing to filesystem cache in 42s
+✓ Finished filesystem cache database compaction in 45s
+✓ Finished filesystem cache database compaction in 61s
+✓ Finished writing to filesystem cache in 13.1s
+✓ Finished writing to filesystem cache in 19.7s
+ GET /admin/announcements 200 in 19.2s (next.js: 7.4s, application-code: 11.8s)
+ GET /manifest.webmanifest 200 in 4.1s (next.js: 2.7s, application-code: 1444ms)
+✓ Finished writing to filesystem cache in 47s
+✓ Finished writing to filesystem cache in 40s
+ GET /admin/users 200 in 6.5s (next.js: 2.0s, application-code: 4.5s)
+ GET /manifest.webmanifest 200 in 380ms (next.js: 107ms, application-code: 273ms)
+ GET /admin/roles 200 in 7.2s (next.js: 1185ms, application-code: 6.1s)
+ GET /manifest.webmanifest 200 in 591ms (next.js: 299ms, application-code: 292ms)
+ GET /admin 200 in 855ms (next.js: 347ms, application-code: 508ms)
+ GET /manifest.webmanifest 200 in 26ms (next.js: 8ms, application-code: 19ms)
+ GET /admin/users 200 in 282ms (next.js: 16ms, application-code: 266ms)
+ GET /manifest.webmanifest 200 in 26ms (next.js: 8ms, application-code: 18ms)
+ GET /admin/roles 200 in 512ms (next.js: 140ms, application-code: 371ms)
+ GET /manifest.webmanifest 200 in 36ms (next.js: 14ms, application-code: 22ms)
+ GET /admin/announcements 200 in 427ms (next.js: 146ms, application-code: 281ms)
+ GET /manifest.webmanifest 200 in 25ms (next.js: 8ms, application-code: 18ms)
+ GET /admin/events 200 in 915ms (next.js: 603ms, application-code: 312ms)
+ GET /manifest.webmanifest 200 in 41ms (next.js: 17ms, application-code: 24ms)
+ GET /admin/coupons 200 in 1664ms (next.js: 1056ms, application-code: 608ms)
+ GET /manifest.webmanifest 200 in 53ms (next.js: 36ms, application-code: 17ms)
+ GET /admin/orders 200 in 2.1s (next.js: 1740ms, application-code: 404ms)
+ GET /manifest.webmanifest 200 in 32ms (next.js: 15ms, application-code: 17ms)
+ GET /admin/notifications 200 in 852ms (next.js: 471ms, application-code: 381ms)
+ GET /manifest.webmanifest 200 in 42ms (next.js: 11ms, application-code: 31ms)
+ GET /admin/media 200 in 1314ms (next.js: 370ms, application-code: 944ms)
+ GET /manifest.webmanifest 200 in 75ms (next.js: 57ms, application-code: 18ms)
+ GET /admin/payments 200 in 1220ms (next.js: 553ms, application-code: 668ms)
+ GET /manifest.webmanifest 200 in 37ms (next.js: 18ms, application-code: 19ms)
+ GET /admin/audit-logs 200 in 718ms (next.js: 338ms, application-code: 380ms)
+ GET /manifest.webmanifest 200 in 31ms (next.js: 14ms, application-code: 17ms)
+ GET /admin/settings 200 in 1180ms (next.js: 764ms, application-code: 417ms)
+ GET /manifest.webmanifest 200 in 66ms (next.js: 41ms, application-code: 25ms)
+ GET /profile 200 in 8.3s (next.js: 7.5s, application-code: 736ms)
+ GET /manifest.webmanifest 200 in 29ms (next.js: 11ms, application-code: 17ms)
+ GET /manifest.webmanifest 200 in 45ms (next.js: 20ms, application-code: 25ms)
+ GET /admin/settings 200 in 63s (next.js: 63s, application-code: 99ms)
+ GET /admin/settings 200 in 483ms (next.js: 68ms, application-code: 415ms)
+ GET /manifest.webmanifest 200 in 263ms (next.js: 116ms, application-code: 147ms)
+✓ Finished writing to filesystem cache in 69s
+ GET /login 200 in 4.3s (next.js: 1233ms, application-code: 3.1s)
+ GET /login 200 in 309ms (next.js: 23ms, application-code: 286ms)
+ GET /manifest.webmanifest 200 in 125ms (next.js: 109ms, application-code: 16ms)
+ GET /register 200 in 729ms (next.js: 267ms, application-code: 461ms)
+ GET /manifest.webmanifest 200 in 184ms (next.js: 99ms, application-code: 85ms)
+ GET /login?registered=1 200 in 321ms (next.js: 27ms, application-code: 295ms)
+ GET /manifest.webmanifest 200 in 24ms (next.js: 7ms, application-code: 16ms)
+✓ Finished writing to filesystem cache in 11.9s
+✓ Finished filesystem cache database compaction in 38.4s
+✓ Finished filesystem cache database compaction in 22.0s
+ GET /login?registered=1 200 in 95s (next.js: 18.1s, application-code: 77s)
+✓ Finished writing to filesystem cache in 11.6s
+✓ Finished writing to filesystem cache in 7.2min
+✓ Finished filesystem cache database compaction in 2.6min
+✓ Finished writing to filesystem cache in 14.8s
+✓ Finished writing to filesystem cache in 63s
+✓ Finished filesystem cache database compaction in 31.8s
+✓ Finished filesystem cache database compaction in 79s
+✓ Finished filesystem cache database compaction in 88s
+✓ Finished writing to filesystem cache in 16.1s
+✓ Finished writing to filesystem cache in 11.1s
+✓ Finished writing to filesystem cache in 31.1s
+✓ Finished writing to filesystem cache in 13.7s
+✓ Finished writing to filesystem cache in 14.3s
+✓ Finished writing to filesystem cache in 7.5min
+✓ Finished writing to filesystem cache in 27.5s
+✓ Finished writing to filesystem cache in 13.9s
+✓ Finished writing to filesystem cache in 7.0min
+✓ Finished filesystem cache database compaction in 3.6min
+✓ Finished writing to filesystem cache in 2.1min
+✓ Finished filesystem cache database compaction in 3.6min

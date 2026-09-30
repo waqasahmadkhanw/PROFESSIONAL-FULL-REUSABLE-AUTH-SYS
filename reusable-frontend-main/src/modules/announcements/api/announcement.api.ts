@@ -1,0 +1,10 @@
+import apiClient from "@/shared/api/client"; import { API_ENDPOINTS } from "@/shared/api/endpoints"; import type {Announcement,AnnouncementListResult,AnnouncementPayload} from "../types";
+export const getAnnouncementsApi=async():Promise<AnnouncementListResult>=>{const r=await apiClient.get<unknown>(API_ENDPOINTS.ANNOUNCEMENTS.LIST);const a=Array.isArray(r)?r:((r as { announcements?: Announcement[] })?.announcements??(r as { data?: Announcement[] })?.data??[]);return {announcements:a,total:a.length};};
+export const getAnnouncementByIdApi=(id:string)=>apiClient.get<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.DETAILS(id));
+export const createAnnouncementApi=(d:AnnouncementPayload)=>apiClient.post<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.CREATE,d);
+export const updateAnnouncementApi=(id:string,d:Partial<AnnouncementPayload>)=>apiClient.put<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.UPDATE(id),d);
+export const deleteAnnouncementApi=(id:string)=>apiClient.delete<null>(API_ENDPOINTS.ANNOUNCEMENTS.DELETE(id));
+export const toggleAnnouncementPinApi=(id:string)=>apiClient.patch<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.PIN(id));
+export const publishAnnouncementApi=(id:string)=>apiClient.patch<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.PUBLISH(id));
+export const archiveAnnouncementApi=(id:string)=>apiClient.patch<Announcement>(API_ENDPOINTS.ANNOUNCEMENTS.ARCHIVE(id));
+export const announcementApi={getAll:getAnnouncementsApi,getById:getAnnouncementByIdApi,create:createAnnouncementApi,update:updateAnnouncementApi,remove:deleteAnnouncementApi,togglePin:toggleAnnouncementPinApi,publish:publishAnnouncementApi,archive:archiveAnnouncementApi};

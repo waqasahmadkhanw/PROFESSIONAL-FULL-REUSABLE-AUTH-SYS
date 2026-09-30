@@ -1,0 +1,10 @@
+'use client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/shared/constants/queryKeys';
+import { eventApi } from '../api';
+import type { EventPayload, EventStatus } from '../types';
+const refresh=(qc:ReturnType<typeof useQueryClient>)=>qc.invalidateQueries({queryKey:QUERY_KEYS.EVENTS.ALL});
+export const useCreateEventMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(d:EventPayload)=>eventApi.create(d),onSuccess:()=>refresh(qc)});};
+export const useUpdateEventMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:({id,data}:{id:string;data:Partial<EventPayload>})=>eventApi.update(id,data),onSuccess:(_,v)=>{refresh(qc);qc.invalidateQueries({queryKey:QUERY_KEYS.EVENTS.DETAILS(v.id)});}});};
+export const useDeleteEventMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(id:string)=>eventApi.remove(id),onSuccess:()=>refresh(qc)});};
+export const useUpdateEventStatusMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:({id,status}:{id:string;status:EventStatus})=>eventApi.status(id,status),onSuccess:(_,v)=>{refresh(qc);qc.invalidateQueries({queryKey:QUERY_KEYS.EVENTS.DETAILS(v.id)});}});};

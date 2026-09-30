@@ -1,0 +1,2 @@
+"use client";
+import { useQuery } from "@tanstack/react-query"; import { announcementApi } from "../api"; import { QUERY_KEYS } from "@/shared/constants/queryKeys"; export const useAnnouncementsQuery=()=>useQuery({queryKey:QUERY_KEYS.ANNOUNCEMENTS.ALL,queryFn:announcementApi.getAll}); export const useAnnouncementQuery=(id?:string)=>useQuery({queryKey:QUERY_KEYS.ANNOUNCEMENTS.DETAILS(id??""),queryFn:()=>announcementApi.getById(id!),enabled:Boolean(id)});

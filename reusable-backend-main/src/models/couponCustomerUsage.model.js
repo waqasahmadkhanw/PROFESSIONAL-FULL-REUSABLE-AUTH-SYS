@@ -1,0 +1,32 @@
+import mongoose, { Schema } from "mongoose";
+
+const couponCustomerUsageSchema = new Schema(
+  {
+    coupon: { 
+      type: Schema.Types.ObjectId, 
+      ref: "Coupon",
+       required: true },
+    customer: {
+       type: Schema.Types.ObjectId,
+       ref: "User",
+        required: true },
+    usageCount: {
+       type: Number, 
+      default: 0,
+       min: 0 },
+    lastUsedAt: {
+       type: Date, 
+       default: null
+       },
+  },
+  { timestamps: true },
+);
+
+// One counter per coupon/customer pair. The counter is updated atomically
+// inside the same MongoDB transaction that creates the usage ledger row.
+couponCustomerUsageSchema.index({ coupon: 1, customer: 1 }, { unique: true });
+
+export const CouponCustomerUsage = mongoose.model(
+  "CouponCustomerUsage",
+  couponCustomerUsageSchema,
+);

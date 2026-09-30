@@ -1,0 +1,2 @@
+"use client";
+import { useQuery } from "@tanstack/react-query"; import { eventApi } from "../api"; import { QUERY_KEYS } from "@/shared/constants/queryKeys"; export const useEventsQuery=()=>useQuery({queryKey:QUERY_KEYS.EVENTS.ALL,queryFn:eventApi.getAll}); export const useEventQuery=(id?:string)=>useQuery({queryKey:QUERY_KEYS.EVENTS.DETAILS(id??""),queryFn:()=>eventApi.getById(id!),enabled:Boolean(id)});

@@ -1,0 +1,1 @@
+export { default as ResendOTPButton } from "./ResendOTPButton";

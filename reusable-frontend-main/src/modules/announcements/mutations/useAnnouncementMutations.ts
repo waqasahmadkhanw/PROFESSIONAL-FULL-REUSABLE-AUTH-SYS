@@ -1,0 +1,12 @@
+'use client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/shared/constants/queryKeys';
+import { announcementApi } from '../api';
+import type { AnnouncementPayload } from '../types';
+const refresh=(qc:ReturnType<typeof useQueryClient>)=>qc.invalidateQueries({queryKey:QUERY_KEYS.ANNOUNCEMENTS.ALL});
+export const useCreateAnnouncementMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(d:AnnouncementPayload)=>announcementApi.create(d),onSuccess:()=>refresh(qc)});};
+export const useUpdateAnnouncementMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:({id,data}:{id:string;data:Partial<AnnouncementPayload>})=>announcementApi.update(id,data),onSuccess:(_,v)=>{refresh(qc);qc.invalidateQueries({queryKey:QUERY_KEYS.ANNOUNCEMENTS.DETAILS(v.id)});}});};
+export const useDeleteAnnouncementMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(id:string)=>announcementApi.remove(id),onSuccess:()=>refresh(qc)});};
+export const useToggleAnnouncementPinMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(id:string)=>announcementApi.togglePin(id),onSuccess:()=>refresh(qc)});};
+export const usePublishAnnouncementMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(id:string)=>announcementApi.publish(id),onSuccess:()=>refresh(qc)});};
+export const useArchiveAnnouncementMutation=()=>{const qc=useQueryClient();return useMutation({mutationFn:(id:string)=>announcementApi.archive(id),onSuccess:()=>refresh(qc)});};

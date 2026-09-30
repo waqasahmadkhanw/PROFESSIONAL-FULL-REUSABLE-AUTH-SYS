@@ -1,0 +1,48 @@
+.container-custom {
+
+width:100%;
+
+margin-left:auto;
+
+margin-right:auto;
+
+padding-left:1rem;
+
+padding-right:1rem;
+
+}
+
+
+
+.flex-center {
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+
+
+.text-balance {
+
+text-wrap:balance;
+
+}
+
+
+
+.scrollbar-hide {
+
+scrollbar-width:none;
+
+}
+
+
+.scrollbar-hide::-webkit-scrollbar {
+
+display:none;
+
+}

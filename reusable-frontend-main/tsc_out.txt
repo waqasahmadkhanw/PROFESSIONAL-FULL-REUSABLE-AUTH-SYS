@@ -1,0 +1,13 @@
+src/modules/audit-logs/pages/AuditLogsPage.tsx(16,41): error TS2554: Expected 1 arguments, but got 2.
+src/modules/coupons/queries/useCouponQueries.ts(2,290): error TS2345: Argument of type 'CouponQueryParams | undefined' is not assignable to parameter of type 'Record<string, unknown> | undefined'.
+  Type 'CouponQueryParams' is not assignable to type 'Record<string, unknown>'.
+    Index signature for type 'string' is missing in type 'CouponQueryParams'.
+src/modules/dashboard/types/index.ts(1,32): error TS2305: Module '"./dashboard.types"' has no exported member 'DashboardResponse'.
+src/modules/index.ts(8,1): error TS2308: Module "./auth" has already exported a member named 'UserRole'. Consider explicitly re-exporting to resolve the ambiguity.
+src/modules/index.ts(9,1): error TS2308: Module "./auth" has already exported a member named 'useRolesQuery'. Consider explicitly re-exporting to resolve the ambiguity.
+src/modules/index.ts(21,1): error TS2308: Module "./payments" has already exported a member named 'PaymentStatus'. Consider explicitly re-exporting to resolve the ambiguity.
+src/modules/index.ts(22,1): error TS2308: Module "./auth" has already exported a member named 'useDeleteAccountMutation'. Consider explicitly re-exporting to resolve the ambiguity.
+src/modules/index.ts(22,1): error TS2308: Module "./auth" has already exported a member named 'useUpdateProfileMutation'. Consider explicitly re-exporting to resolve the ambiguity.
+src/modules/orders/queries/useOrderQueries.ts(2,285): error TS2345: Argument of type 'OrderQueryParams | undefined' is not assignable to parameter of type 'Record<string, unknown> | undefined'.
+  Type 'OrderQueryParams' is not assignable to type 'Record<string, unknown>'.
+    Index signature for type 'string' is missing in type 'OrderQueryParams'.
