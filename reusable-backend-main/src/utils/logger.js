@@ -1,10 +1,24 @@
 const SENSITIVE_KEYS = new Set([
-  "password", "passwd", "token", "accesstoken", "refreshtoken", "csrftoken",
-  "secret", "authorization", "cookie", "set-cookie", "apikey", "api_key",
-  "clientsecret", "stripe-signature", "signature", "smtp_password",
+  "password",
+  "passwd",
+  "token",
+  "accesstoken",
+  "refreshtoken",
+  "csrftoken",
+  "secret",
+  "authorization",
+  "cookie",
+  "set-cookie",
+  "apikey",
+  "api_key",
+  "clientsecret",
+  "stripe-signature",
+  "signature",
+  "smtp_password",
 ]);
 
-const isSensitiveKey = (key) => SENSITIVE_KEYS.has(String(key).replace(/[-_]/g, "").toLowerCase()) ||
+const isSensitiveKey = (key) =>
+  SENSITIVE_KEYS.has(String(key).replace(/[-_]/g, "").toLowerCase()) ||
   SENSITIVE_KEYS.has(String(key).toLowerCase());
 
 const serialize = (value, key = "") => {
@@ -14,7 +28,11 @@ const serialize = (value, key = "") => {
   }
   if (Array.isArray(value)) return value.slice(0, 100).map((item) => serialize(item));
   if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).slice(0, 100).map(([k, v]) => [k, serialize(v, k)]));
+    return Object.fromEntries(
+      Object.entries(value)
+        .slice(0, 100)
+        .map(([k, v]) => [k, serialize(v, k)]),
+    );
   }
   return value;
 };

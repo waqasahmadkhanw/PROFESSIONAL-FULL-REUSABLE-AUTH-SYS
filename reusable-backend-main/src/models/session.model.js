@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose";
 
 const sessionSchema = new Schema(
   {
@@ -37,10 +37,10 @@ const sessionSchema = new Schema(
       index: true,
     },
   },
-  { timestamps: true }
-)
+  { timestamps: true },
+);
 
-sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
-sessionSchema.index({ user: 1, revokedAt: 1, expiresAt: 1 })
+sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+sessionSchema.index({ user: 1, revokedAt: 1, expiresAt: 1 });
 
-export const Session = mongoose.model("Session", sessionSchema)
+export const Session = mongoose.model("Session", sessionSchema);

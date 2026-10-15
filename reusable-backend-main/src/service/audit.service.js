@@ -20,12 +20,31 @@ const sanitizeAuditUrl = (value) => {
 
 const sanitizeDetails = (value) => {
   if (!value || typeof value !== "object") return {};
-  const blocked = new Set(["password", "token", "accesstoken", "refreshtoken", "csrftoken", "secret", "authorization", "cookie", "set-cookie", "apikey", "clientsecret", "passwordresettoken", "verificationtoken", "signature"]);
+  const blocked = new Set([
+    "password",
+    "token",
+    "accesstoken",
+    "refreshtoken",
+    "csrftoken",
+    "secret",
+    "authorization",
+    "cookie",
+    "set-cookie",
+    "apikey",
+    "clientsecret",
+    "passwordresettoken",
+    "verificationtoken",
+    "signature",
+  ]);
   const output = Array.isArray(value) ? [] : {};
   for (const [key, val] of Object.entries(value)) {
     if (blocked.has(key) || blocked.has(key.toLowerCase())) continue;
     const normalizedKey = key.replace(/[-_\s]/g, "").toLowerCase();
-    if (blocked.has(normalizedKey) || /(?:token|secret|password|apikey|signature)$/i.test(normalizedKey)) continue;
+    if (
+      blocked.has(normalizedKey) ||
+      /(?:token|secret|password|apikey|signature)$/i.test(normalizedKey)
+    )
+      continue;
     if (val && typeof val === "object" && !Array.isArray(val)) output[key] = sanitizeDetails(val);
     else if (Array.isArray(val)) output[key] = val.slice(0, 50);
     else output[key] = val;
@@ -33,7 +52,15 @@ const sanitizeDetails = (value) => {
   return output;
 };
 
-export const recordAudit = async ({ req, action, resource = "", resourceId = null, statusCode = 200, details = {}, user = req?.user } = {}) => {
+export const recordAudit = async ({
+  req,
+  action,
+  resource = "",
+  resourceId = null,
+  statusCode = 200,
+  details = {},
+  user = req?.user,
+} = {}) => {
   try {
     return await AuditLog.create({
       user: user?._id || null,

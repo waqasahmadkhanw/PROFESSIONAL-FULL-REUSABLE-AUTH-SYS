@@ -9,9 +9,7 @@
 
 const jazzcashConfig = {
   // Endpoint
-  baseUrl:
-    process.env.JAZZCASH_BASE_URL ||
-    "https://sandbox.jazzcash.com.pk",
+  baseUrl: process.env.JAZZCASH_BASE_URL || "https://sandbox.jazzcash.com.pk",
   // Production: https://payments.jazzcash.com.pk
 
   // Merchant identifier
@@ -38,4 +36,3 @@ const jazzcashConfig = {
 };
 
 export default jazzcashConfig;
-

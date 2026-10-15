@@ -8,16 +8,18 @@ const cleanup = async (files) => {
   }
 };
 
-export const validateUploadedFileMiddleware = ({ allowedTypes = "all", required = true } = {}) => async (req, _res, next) => {
-  try {
-    if (!req.file) {
-      if (required) throw new ApiError(400, "File is required");
-      return next();
+export const validateUploadedFileMiddleware =
+  ({ allowedTypes = "all", required = true } = {}) =>
+  async (req, _res, next) => {
+    try {
+      if (!req.file) {
+        if (required) throw new ApiError(400, "File is required");
+        return next();
+      }
+      await validateUploadedFile(req.file, { allowedTypes });
+      next();
+    } catch (error) {
+      await cleanup([req.file]);
+      next(error);
     }
-    await validateUploadedFile(req.file, { allowedTypes });
-    next();
-  } catch (error) {
-    await cleanup([req.file]);
-    next(error);
-  }
-};
+  };

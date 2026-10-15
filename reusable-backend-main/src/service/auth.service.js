@@ -28,6 +28,5 @@ export const issueSessionTokens = async ({ userId, userAgent, ipAddress }) => {
     sessionId: temporary._id,
   });
 
-
   return { user, accessToken, refreshToken, session: temporary };
 };

@@ -19,11 +19,13 @@ export const buildPaymentListFilter = async (query = {}) => {
   const allowedMethods = new Set(["stripe", "easypaisa", "jazzcash", "free", "other"]);
 
   if (query.status) {
-    if (!allowedStatuses.has(String(query.status))) throw new ApiError(400, "Invalid payment status");
+    if (!allowedStatuses.has(String(query.status)))
+      throw new ApiError(400, "Invalid payment status");
     filter.status = String(query.status);
   }
   if (query.paymentMethod) {
-    if (!allowedMethods.has(String(query.paymentMethod))) throw new ApiError(400, "Invalid payment method");
+    if (!allowedMethods.has(String(query.paymentMethod)))
+      throw new ApiError(400, "Invalid payment method");
     filter.paymentMethod = String(query.paymentMethod);
   }
 
@@ -50,7 +52,12 @@ export const buildPaymentListFilter = async (query = {}) => {
   if (search) {
     const safe = escapeRegex(search);
     const [matchingUsers, objectIdMatch] = await Promise.all([
-      User.find({ $or: [{ name: { $regex: safe, $options: "i" } }, { email: { $regex: safe, $options: "i" } }] })
+      User.find({
+        $or: [
+          { name: { $regex: safe, $options: "i" } },
+          { email: { $regex: safe, $options: "i" } },
+        ],
+      })
         .select("_id")
         .limit(100)
         .lean(),
@@ -63,7 +70,8 @@ export const buildPaymentListFilter = async (query = {}) => {
       { jazzcashTxnRefNo: { $regex: safe, $options: "i" } },
     ];
 
-    if (matchingUsers.length) searchConditions.push({ customer: { $in: matchingUsers.map((user) => user._id) } });
+    if (matchingUsers.length)
+      searchConditions.push({ customer: { $in: matchingUsers.map((user) => user._id) } });
     if (objectIdMatch) searchConditions.push({ _id: objectIdMatch });
     filter.$or = searchConditions;
   }

@@ -23,7 +23,7 @@ export class MongoRateLimitStore {
     const active = await RateLimit.findOneAndUpdate(
       { key: namespacedKey, resetAt: { $gt: now } },
       { $inc: { hits: 1 } },
-      { new: true }
+      { new: true },
     ).lean();
 
     if (active) {
@@ -44,7 +44,7 @@ export class MongoRateLimitStore {
       const retried = await RateLimit.findOneAndUpdate(
         { key: namespacedKey, resetAt: { $gt: new Date() } },
         { $inc: { hits: 1 } },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (retried) {
@@ -56,7 +56,7 @@ export class MongoRateLimitStore {
       const replaced = await RateLimit.findOneAndUpdate(
         { key: namespacedKey, resetAt: { $lte: new Date() } },
         { $set: { hits: 1, resetAt } },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!replaced) throw error;
@@ -66,10 +66,7 @@ export class MongoRateLimitStore {
 
   async decrement(key) {
     const namespacedKey = `${this.prefix}:${key}`;
-    await RateLimit.updateOne(
-      { key: namespacedKey, hits: { $gt: 0 } },
-      { $inc: { hits: -1 } }
-    );
+    await RateLimit.updateOne({ key: namespacedKey, hits: { $gt: 0 } }, { $inc: { hits: -1 } });
   }
 
   async resetKey(key) {

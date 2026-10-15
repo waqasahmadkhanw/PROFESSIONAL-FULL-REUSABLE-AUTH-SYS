@@ -6,7 +6,7 @@ const middleware = fs.readFileSync("src/middlewares/rateLimit.middleware.js", "u
 const app = fs.readFileSync("src/app.js", "utf8");
 const userRoutes = fs.readFileSync("src/routes/user.route.js", "utf8");
 
- test("rate limiting uses a shared MongoDB store", () => {
+test("rate limiting uses a shared MongoDB store", () => {
   assert.match(middleware, /MongoRateLimitStore/);
   assert.match(middleware, /passOnStoreError:\s*false/);
   assert.match(middleware, /ipKeyGenerator/);

@@ -27,7 +27,8 @@ export const upload = multer({
   },
   fileFilter: (_req, file, cb) => {
     const mime = String(file.mimetype || "").toLowerCase();
-    if (!allowedMimes.has(mime)) return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname));
+    if (!allowedMimes.has(mime))
+      return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname));
     cb(null, true);
   },
 });

@@ -3,12 +3,7 @@ import globals from "globals";
 
 export default [
   {
-    ignores: [
-      "node_modules/**",
-      "coverage/**",
-      "public/temp/**",
-      "uploads/**",
-    ],
+    ignores: ["node_modules/**", "coverage/**", "public/temp/**", "uploads/**"],
   },
   {
     files: ["**/*.js"],

@@ -15,9 +15,13 @@ test("OpenAPI contract has required 3.1 metadata and responses", () => {
 });
 
 test("OpenAPI route contract has no registered-route drift", () => {
-  const result = spawnSync(process.execPath, [path.join(root, "scripts", "check-api-contract.mjs")], {
-    cwd: root,
-    encoding: "utf8",
-  });
+  const result = spawnSync(
+    process.execPath,
+    [path.join(root, "scripts", "check-api-contract.mjs")],
+    {
+      cwd: root,
+      encoding: "utf8",
+    },
+  );
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });

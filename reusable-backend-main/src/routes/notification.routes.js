@@ -1,12 +1,24 @@
 import { Router } from "express";
-import { sendNotification,getMyNotifications,getUnreadCount,markAsRead,markAllAsRead,deleteNotification } from "../controllers/notification.controller.js";
-import { authUser,authorizePermission } from "../middlewares/auth.middleware.js";
+import {
+  sendNotification,
+  getMyNotifications,
+  getUnreadCount,
+  markAsRead,
+  markAllAsRead,
+  deleteNotification,
+} from "../controllers/notification.controller.js";
+import { authUser, authorizePermission } from "../middlewares/auth.middleware.js";
 import { PERMISSIONS } from "../constants/permissions.js";
-const router=Router();
-router.post("/send",authUser,authorizePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),sendNotification);
-router.get("/",authUser,getMyNotifications);
-router.get("/unread-count",authUser,getUnreadCount);
-router.patch("/mark-all-read",authUser,markAllAsRead);
-router.patch("/:id/read",authUser,markAsRead);
-router.delete("/:id",authUser,deleteNotification);
+const router = Router();
+router.post(
+  "/send",
+  authUser,
+  authorizePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  sendNotification,
+);
+router.get("/", authUser, getMyNotifications);
+router.get("/unread-count", authUser, getUnreadCount);
+router.patch("/mark-all-read", authUser, markAllAsRead);
+router.patch("/:id/read", authUser, markAsRead);
+router.delete("/:id", authUser, deleteNotification);
 export default router;

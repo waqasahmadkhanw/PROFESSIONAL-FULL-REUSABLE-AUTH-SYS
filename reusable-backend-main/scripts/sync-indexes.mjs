@@ -16,9 +16,18 @@ import "../src/models/role.model.js";
 import "../src/models/setting.model.js";
 import "../src/models/user.model.js";
 
-try{
-  if(!process.env.MONGODB_URI)throw new Error("MONGODB_URI is required");
-  await mongoose.connect(process.env.MONGODB_URI,{dbName:process.env.MONGODB_DB_NAME||undefined});
-  for(const model of Object.values(mongoose.models)){await model.syncIndexes();console.log(`Indexes synchronized: ${model.modelName}`);}
-}catch(error){console.error("Index synchronization failed:",error.message);process.exitCode=1;}
-finally{await mongoose.disconnect().catch(()=>{});}
+try {
+  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is required");
+  await mongoose.connect(process.env.MONGODB_URI, {
+    dbName: process.env.MONGODB_DB_NAME || undefined,
+  });
+  for (const model of Object.values(mongoose.models)) {
+    await model.syncIndexes();
+    console.log(`Indexes synchronized: ${model.modelName}`);
+  }
+} catch (error) {
+  console.error("Index synchronization failed:", error.message);
+  process.exitCode = 1;
+} finally {
+  await mongoose.disconnect().catch(() => {});
+}

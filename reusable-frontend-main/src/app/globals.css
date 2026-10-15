@@ -134,21 +134,7 @@ body {
 }
 
 .dark body {
-  background:
-    radial-gradient(circle at top left, rgba(99, 102, 241, 0.22), transparent 28%),
-    radial-gradient(circle at top right, rgba(45, 212, 191, 0.14), transparent 22%),
-    linear-gradient(180deg, #090f1d 0%, #0b1220 100%);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(circle at center, black, transparent 80%);
+  background-color: rgb(var(--background));
 }
 
 html {
@@ -159,8 +145,6 @@ html {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
 }
 
 .dark .glass-panel {
@@ -254,19 +238,6 @@ table {
 /*  Animations                                                        */
 /* ------------------------------------------------------------------ */
 
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 25s linear infinite;
-}
-
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -348,10 +319,6 @@ table {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .animate-marquee {
-    animation: none !important;
-  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -398,11 +365,11 @@ table {
 }
 
 .section-gradient-flash {
-  background-image: linear-gradient(to bottom right, rgb(var(--background)), rgb(249 115 22 / 0.08), rgb(59 130 246 / 0.08));
+  background: linear-gradient(to bottom right, rgb(var(--background)), rgb(249 115 22 / 0.08));
 }
 
 .dark .section-gradient-flash {
-  background-image: linear-gradient(to bottom right, rgb(var(--background)), rgb(249 115 22 / 0.05), rgb(59 130 246 / 0.05));
+  background: linear-gradient(to bottom right, rgb(var(--background)), rgb(59 130 246 / 0.08));
 }
 
 /* Card base */

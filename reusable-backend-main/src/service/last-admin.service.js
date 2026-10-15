@@ -11,16 +11,18 @@ export const withLastAdminLock = async (work) => {
   let lock;
   try {
     lock = await OperationLock.findOneAndUpdate(
-    { key: KEY, $or: [{ expiresAt: { $lte: new Date() } }, { expiresAt: { $exists: false } }] },
-    { $set: { key: KEY, owner, expiresAt } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
-  ).lean();
+      { key: KEY, $or: [{ expiresAt: { $lte: new Date() } }, { expiresAt: { $exists: false } }] },
+      { $set: { key: KEY, owner, expiresAt } },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ).lean();
   } catch (error) {
-    if (error?.code === 11000) throw new ApiError(409, "Another administrator security change is in progress");
+    if (error?.code === 11000)
+      throw new ApiError(409, "Another administrator security change is in progress");
     throw error;
   }
 
-  if (!lock || lock.owner !== owner) throw new ApiError(409, "Another administrator security change is in progress");
+  if (!lock || lock.owner !== owner)
+    throw new ApiError(409, "Another administrator security change is in progress");
 
   try {
     return await work();

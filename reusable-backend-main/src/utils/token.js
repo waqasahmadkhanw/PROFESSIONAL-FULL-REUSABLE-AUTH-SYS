@@ -8,24 +8,22 @@ const required = (name) => {
   return value;
 };
 
-export const hashToken = (token) =>
-  crypto.createHash("sha256").update(String(token)).digest("hex");
+export const hashToken = (token) => crypto.createHash("sha256").update(String(token)).digest("hex");
 
-export const createOpaqueToken = (bytes = 48) =>
-  crypto.randomBytes(bytes).toString("base64url");
+export const createOpaqueToken = (bytes = 48) => crypto.randomBytes(bytes).toString("base64url");
 
 export const signAccessToken = ({ userId, email, role, sessionId }) =>
   jwt.sign(
     { _id: String(userId), email, role, sessionId: String(sessionId), tokenType: "access" },
     required("ACCESS_TOKEN_SECRET"),
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" },
   );
 
 export const signRefreshToken = ({ userId, sessionId }) =>
   jwt.sign(
     { _id: String(userId), sessionId: String(sessionId), tokenType: "refresh" },
     required("REFRESH_TOKEN_SECRET"),
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" }
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" },
   );
 
 export const verifyAccessToken = (token) => {

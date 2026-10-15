@@ -9,7 +9,9 @@ export const generateCsrfToken = () => crypto.randomBytes(CSRF_TOKEN_BYTES).toSt
 export const csrfCookieOptions = {
   httpOnly: false,
   secure: process.env.NODE_ENV === "production" || process.env.COOKIE_SECURE === "true",
-  sameSite: (process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === "production" ? "none" : "lax")).toLowerCase(),
+  sameSite: (
+    process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === "production" ? "none" : "lax")
+  ).toLowerCase(),
   path: "/",
   ...(process.env.COOKIE_DOMAIN?.trim() ? { domain: process.env.COOKIE_DOMAIN.trim() } : {}),
   maxAge: 24 * 60 * 60 * 1000,

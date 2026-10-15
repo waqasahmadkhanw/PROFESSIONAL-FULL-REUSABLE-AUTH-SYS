@@ -15,8 +15,7 @@ import jazzcashConfig from "../config/jazzcash.js";
  *     considering payment successful.
  */
 
-const padLeft = (value, length = 6, padChar = "0") =>
-  String(value).padStart(length, padChar);
+const padLeft = (value, length = 6, padChar = "0") => String(value).padStart(length, padChar);
 
 /**
  * JazzCash requires the DateTime (YYYYMMDDHHmmss) and an
@@ -42,10 +41,7 @@ const jazzCashExpiry = (minutes = 60) => {
  */
 export const buildJazzCashIntegrity = ({ salesId, amount, currency, merchantId }) => {
   const str = `${merchantId}&${salesId}&${amount}&${currency}`;
-  return crypto
-    .createHmac("sha256", jazzcashConfig.integritySalt)
-    .update(str)
-    .digest("hex");
+  return crypto.createHmac("sha256", jazzcashConfig.integritySalt).update(str).digest("hex");
 };
 
 /**
@@ -59,12 +55,12 @@ export const createJazzCashCheckout = async ({
   mobileNumber,
   customerName,
   successUrl,
-  cancelUrl,
+  _cancelUrl,
   paymentId = "",
 }) => {
   const pp_TxnDateTime = jazzCashDateTime();
   const pp_TxnExpiryDateTime = jazzCashExpiry(60);
-  const pp_SalesID = `JC_${String(orderId).slice(0,20)}_${paymentId ? String(paymentId).slice(-8) : crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+  const pp_SalesID = `JC_${String(orderId).slice(0, 20)}_${paymentId ? String(paymentId).slice(-8) : crypto.randomBytes(4).toString("hex").toUpperCase()}`;
   const pp_Amount = Math.round(amount * 100); // JazzCash amount in paisa
   const pp_MerchantID = jazzcashConfig.merchantId;
   const pp_CurrencyCode = jazzcashConfig.currency;
@@ -151,11 +147,16 @@ export const verifyJazzCashPayment = (returnData) => {
 
   let hashValid = false;
   if (expectedHash && typeof pp_SecureHash === "string" && /^[a-f0-9]{64}$/i.test(pp_SecureHash)) {
-    const a=Buffer.from(expectedHash,"hex"); const b=Buffer.from(pp_SecureHash,"hex");
-    hashValid=a.length===b.length && crypto.timingSafeEqual(a,b);
+    const a = Buffer.from(expectedHash, "hex");
+    const b = Buffer.from(pp_SecureHash, "hex");
+    hashValid = a.length === b.length && crypto.timingSafeEqual(a, b);
   }
-  const returnedAmount=Number(pp_Amount);
-  const approved=pp_ResponseCode==="000" && Boolean(hashValid) && Number.isFinite(returnedAmount) && returnedAmount>0;
+  const returnedAmount = Number(pp_Amount);
+  const approved =
+    pp_ResponseCode === "000" &&
+    Boolean(hashValid) &&
+    Number.isFinite(returnedAmount) &&
+    returnedAmount > 0;
 
   return {
     approved,
@@ -168,5 +169,3 @@ export const verifyJazzCashPayment = (returnData) => {
     raw: returnData,
   };
 };
-
-

@@ -12,11 +12,18 @@ export const claimCouponUsage = async (payment, session) => {
   return claimCouponUsageAtomic({ payment, order, session });
 };
 
-export const finalizeSuccessfulPayment = async (paymentId, extra = {}, transactionAmount = null) => {
+export const finalizeSuccessfulPayment = async (
+  paymentId,
+  extra = {},
+  transactionAmount = null,
+) => {
   return withCouponClaimTransaction(async (session) => {
     const payment = await Payment.findById(paymentId).session(session);
     if (!payment) throw new ApiError(404, "Payment not found");
-    if (transactionAmount !== null && Number(transactionAmount) !== Math.round(payment.amount * 100)) {
+    if (
+      transactionAmount !== null &&
+      Number(transactionAmount) !== Math.round(payment.amount * 100)
+    ) {
       throw new ApiError(400, "Payment amount mismatch");
     }
     if (payment.status === "refunded") throw new ApiError(409, "Payment is already refunded");
@@ -36,8 +43,15 @@ export const finalizeSuccessfulPayment = async (paymentId, extra = {}, transacti
     if (payment.order) {
       await Order.updateOne(
         { _id: payment.order, status: "pending", paymentStatus: "pending" },
-        { $set: { payment: payment._id, paymentStatus: "paid", status: "completed", paidAt: new Date() } },
-        { session }
+        {
+          $set: {
+            payment: payment._id,
+            paymentStatus: "paid",
+            status: "completed",
+            paidAt: new Date(),
+          },
+        },
+        { session },
       );
     }
 

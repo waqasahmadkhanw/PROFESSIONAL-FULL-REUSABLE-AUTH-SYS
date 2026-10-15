@@ -19,7 +19,8 @@ export const recordHttpRequest = ({ method, route, status, durationMs }) => {
 
 export const recordMetric = (name, value = 1) => inc(name, value);
 
-const labelEscape = (value) => String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+const labelEscape = (value) =>
+  String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
 
 export const renderPrometheusMetrics = () => {
   const lines = [
@@ -28,16 +29,21 @@ export const renderPrometheusMetrics = () => {
   ];
   for (const [key, value] of counters) {
     const [, ...parts] = key.split("|");
-    const labels = parts.map((part) => {
-      const [k, v] = part.split("=");
-      return `${k}=\"${labelEscape(v)}\"`;
-    }).join(",");
+    const labels = parts
+      .map((part) => {
+        const [k, v] = part.split("=");
+        return `${k}="${labelEscape(v)}"`;
+      })
+      .join(",");
     lines.push(`api_http_requests_total${labels ? `{${labels}}` : ""} ${value}`);
   }
 
   lines.push("# HELP api_http_request_duration_ms HTTP request duration in milliseconds.");
   lines.push("# TYPE api_http_request_duration_ms histogram");
-  for (const bound of bucketBounds) lines.push(`api_http_request_duration_ms_bucket{le="${bound}"} ${latency.buckets.get(bound) || 0}`);
+  for (const bound of bucketBounds)
+    lines.push(
+      `api_http_request_duration_ms_bucket{le="${bound}"} ${latency.buckets.get(bound) || 0}`,
+    );
   lines.push(`api_http_request_duration_ms_bucket{le="+Inf"} ${latency.buckets.get("+Inf") || 0}`);
   lines.push(`api_http_request_duration_ms_sum ${latency.sumMs}`);
   lines.push(`api_http_request_duration_ms_count ${latency.count}`);

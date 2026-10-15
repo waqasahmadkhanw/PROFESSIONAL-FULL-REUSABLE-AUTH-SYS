@@ -26,7 +26,8 @@ const validate = (rules, { source = "body", strict = true } = {}) => {
 
     for (const [field, rule] of Object.entries(rules)) {
       const value = input[field];
-      const missing = value === undefined || value === null || (typeof value === "string" && value.trim() === "");
+      const missing =
+        value === undefined || value === null || (typeof value === "string" && value.trim() === "");
 
       if (rule.required && missing) {
         errors.push(`${field} is required`);
@@ -35,7 +36,11 @@ const validate = (rules, { source = "body", strict = true } = {}) => {
       if (missing) continue;
 
       if (rule.type === "email") {
-        if (typeof value !== "string" || value.length > (rule.max ?? 254) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+        if (
+          typeof value !== "string" ||
+          value.length > (rule.max ?? 254) ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+        ) {
           errors.push(`${field} must be a valid email`);
           continue;
         }
@@ -84,12 +89,17 @@ const validate = (rules, { source = "body", strict = true } = {}) => {
         continue;
       }
 
-      const comparableLength = typeof value === "string" || Array.isArray(value) ? value.length : value;
+      const comparableLength =
+        typeof value === "string" || Array.isArray(value) ? value.length : value;
       if (rule.min !== undefined && comparableLength < rule.min) {
-        errors.push(`${field} must be at least ${rule.min}${typeof comparableLength === "number" ? "" : " characters"}`);
+        errors.push(
+          `${field} must be at least ${rule.min}${typeof comparableLength === "number" ? "" : " characters"}`,
+        );
       }
       if (rule.max !== undefined && comparableLength > rule.max) {
-        errors.push(`${field} must not exceed ${rule.max}${typeof comparableLength === "number" ? "" : " characters"}`);
+        errors.push(
+          `${field} must not exceed ${rule.max}${typeof comparableLength === "number" ? "" : " characters"}`,
+        );
       }
 
       if (rule.regex && (typeof value !== "string" || !rule.regex.test(value.trim()))) {

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose";
 
 const rateLimitSchema = new Schema(
   {
@@ -6,9 +6,9 @@ const rateLimitSchema = new Schema(
     hits: { type: Number, required: true, min: 0 },
     resetAt: { type: Date, required: true },
   },
-  { versionKey: false, timestamps: true }
-)
+  { versionKey: false, timestamps: true },
+);
 
-rateLimitSchema.index({ resetAt: 1 }, { expireAfterSeconds: 0 })
+rateLimitSchema.index({ resetAt: 1 }, { expireAfterSeconds: 0 });
 
-export const RateLimit = mongoose.model("RateLimit", rateLimitSchema)
+export const RateLimit = mongoose.model("RateLimit", rateLimitSchema);

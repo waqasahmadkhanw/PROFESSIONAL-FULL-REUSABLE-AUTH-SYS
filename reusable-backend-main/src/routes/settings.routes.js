@@ -11,10 +11,7 @@ import {
   bulkUpdateSettings,
 } from "../controllers/setting.controller.js";
 
-import {
-  authUser,
-  authorizePermission,
-} from "../middlewares/auth.middleware.js";
+import { authUser, authorizePermission } from "../middlewares/auth.middleware.js";
 
 import { validate } from "../middlewares/validate.middleware.js";
 import {
@@ -30,50 +27,40 @@ const router = Router();
 router.route("/public").get(getPublicSettings);
 
 // BULK UPDATE — admin only
-router.route("/bulk").patch(
-  authUser,
-  authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
-  validate(bulkUpdateSettingsRules),
-  bulkUpdateSettings
-);
-
-// GET BY KEY — admin only
-router.route("/key/:key").get(
-  authUser,
-  authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
-  getSettingByKey
-);
-
-// CRUD — admin only
-router.route("/")
-  .get(
+router
+  .route("/bulk")
+  .patch(
     authUser,
     authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
-    getAllSettings
-  )
+    validate(bulkUpdateSettingsRules),
+    bulkUpdateSettings,
+  );
+
+// GET BY KEY — admin only
+router
+  .route("/key/:key")
+  .get(authUser, authorizePermission(PERMISSIONS.MANAGE_SETTINGS), getSettingByKey);
+
+// CRUD — admin only
+router
+  .route("/")
+  .get(authUser, authorizePermission(PERMISSIONS.MANAGE_SETTINGS), getAllSettings)
   .post(
     authUser,
     authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
     validate(createSettingRules),
-    createSetting
+    createSetting,
   );
 
-router.route("/:id")
-  .get(
-    authUser,
-    authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
-    getSettingById
-  )
+router
+  .route("/:id")
+  .get(authUser, authorizePermission(PERMISSIONS.MANAGE_SETTINGS), getSettingById)
   .patch(
     authUser,
     authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
     validate(updateSettingRules),
-    updateSetting
+    updateSetting,
   )
-  .delete(
-    authUser,
-    authorizePermission(PERMISSIONS.MANAGE_SETTINGS),
-    deleteSetting
-  );
+  .delete(authUser, authorizePermission(PERMISSIONS.MANAGE_SETTINGS), deleteSetting);
 
 export default router;

@@ -2,7 +2,9 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const parseDurationMs = (value, fallbackMs) => {
   if (!value) return fallbackMs;
-  const match = String(value).trim().match(/^(\d+)\s*(ms|s|m|h|d|w)?$/i);
+  const match = String(value)
+    .trim()
+    .match(/^(\d+)\s*(ms|s|m|h|d|w)?$/i);
   if (!match) return fallbackMs;
   const amount = Number(match[1]);
   const unit = (match[2] || "ms").toLowerCase();

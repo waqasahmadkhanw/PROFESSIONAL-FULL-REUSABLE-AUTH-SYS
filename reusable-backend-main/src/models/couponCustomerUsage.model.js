@@ -2,22 +2,25 @@ import mongoose, { Schema } from "mongoose";
 
 const couponCustomerUsageSchema = new Schema(
   {
-    coupon: { 
-      type: Schema.Types.ObjectId, 
+    coupon: {
+      type: Schema.Types.ObjectId,
       ref: "Coupon",
-       required: true },
+      required: true,
+    },
     customer: {
-       type: Schema.Types.ObjectId,
-       ref: "User",
-        required: true },
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     usageCount: {
-       type: Number, 
+      type: Number,
       default: 0,
-       min: 0 },
+      min: 0,
+    },
     lastUsedAt: {
-       type: Date, 
-       default: null
-       },
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -26,7 +29,4 @@ const couponCustomerUsageSchema = new Schema(
 // inside the same MongoDB transaction that creates the usage ledger row.
 couponCustomerUsageSchema.index({ coupon: 1, customer: 1 }, { unique: true });
 
-export const CouponCustomerUsage = mongoose.model(
-  "CouponCustomerUsage",
-  couponCustomerUsageSchema,
-);
+export const CouponCustomerUsage = mongoose.model("CouponCustomerUsage", couponCustomerUsageSchema);

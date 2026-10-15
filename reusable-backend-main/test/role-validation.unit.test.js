@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoleRules, updateRoleRules, assignUserPermissionsRules, roleIdRules } from "../src/validators/role.validator.js";
+import {
+  createRoleRules,
+  updateRoleRules,
+  assignUserPermissionsRules,
+  roleIdRules,
+} from "../src/validators/role.validator.js";
 import { ALL_PERMISSIONS } from "../src/constants/permissions.js";
 
 test("role validators allow valid role payloads", () => {
@@ -11,8 +16,14 @@ test("role validators allow valid role payloads", () => {
 });
 
 test("role validators reject invalid permission values and duplicate permissions", () => {
-  assert.match(assignUserPermissionsRules.permissions.custom([ALL_PERMISSIONS[0], ALL_PERMISSIONS[0]]), /duplicates/);
-  assert.match(assignUserPermissionsRules.permissions.custom(["not_a_permission"]), /invalid permission/);
+  assert.match(
+    assignUserPermissionsRules.permissions.custom([ALL_PERMISSIONS[0], ALL_PERMISSIONS[0]]),
+    /duplicates/,
+  );
+  assert.match(
+    assignUserPermissionsRules.permissions.custom(["not_a_permission"]),
+    /invalid permission/,
+  );
 });
 
 test("role ID rule requires a Mongo ObjectId", () => {

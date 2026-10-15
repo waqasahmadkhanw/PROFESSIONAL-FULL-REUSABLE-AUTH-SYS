@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { BadgeCheck, CalendarDays, Camera, CheckCircle2, ChevronRight, CircleUserRound, Clock3, Mail, ShieldCheck, UserRound } from "lucide-react";
-import { useCurrentUserQuery, useUpdateProfile, useUploadAvatarMutation } from "@/modules/auth";
+import { BadgeCheck, CalendarDays, Camera, CheckCircle2, ChevronRight, CircleUserRound, Clock3, LogOut, Mail, ShieldCheck, Trash2, UserRound, Check } from "lucide-react";
+import { useCurrentUserQuery, useUploadAvatarMutation, useLogout, useDeleteAccount } from "@/modules/auth";
+import { useUpdateProfile } from "@/modules/profile";
 import { Avatar, Button } from "@/shared/components/ui";
 import { useToast } from "@/shared/components/ui/Toast";
 import { Loading, ErrorState } from "@/shared/components/feedback";
+import { ConfirmDialog } from "@/shared/components/overlay/ConfirmDialog";
 
 interface ProfileFormValues { name: string; email: string; bio: string; phone: string; profession: string; address: string; }
 
@@ -22,9 +24,15 @@ export default function ProfilePage() {
   const { data: user, isLoading, isError, refetch } = useCurrentUserQuery();
   const { updateProfile, isPending } = useUpdateProfile();
   const uploadAvatarMutation = useUploadAvatarMutation();
+  const { logout, isPending: isLogoutPending } = useLogout();
+  const { deleteAccount, isPending: isDeletePending } = useDeleteAccount();
   const { success, error: showError } = useToast();
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<ProfileFormValues>({ defaultValues: { name: "", email: "", bio: "", phone: "", profession: "", address: "" } });
+  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<ProfileFormValues>({ defaultValues: { name: "", email: "", bio: "", phone: "", profession: "", address: "" }, mode: "onChange" });
+
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
 
   useEffect(() => {
     if (user) reset({ name: user.name ?? "", email: user.email ?? "", bio: user.bio ?? "", phone: user.phone ?? "", profession: user.profession ?? "", address: user.address ?? "" });
@@ -34,6 +42,8 @@ export default function ProfilePage() {
     try {
       await updateProfile({ name: values.name, bio: values.bio, phone: values.phone, profession: values.profession, address: values.address });
       success("Profile updated");
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 2000);
     } catch (err) {
       showError((err as Error)?.message ?? "Failed to update profile");
     }
@@ -60,6 +70,7 @@ export default function ProfilePage() {
   const roleLabel = user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}` : "Member";
 
   return (
+    <>
     <main className="min-h-full bg-slate-50 px-4 py-5 sm:px-6 sm:py-7 lg:px-8 dark:bg-slate-950">
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -71,7 +82,7 @@ export default function ProfilePage() {
           <div className="inline-flex items-center gap-2 self-start rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 sm:self-auto dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" />{user?.isActivated ? "Account active" : "Account pending activation"}</div>
         </header>
 
-        <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-violet-950 to-violet-800 shadow-sm">
+        <section className="overflow-hidden rounded-2xl bg-linear-to-br from-slate-950 via-violet-950 to-violet-800 shadow-sm">
           <div className="relative grid gap-6 p-5 sm:p-7 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-8">
             <div className="pointer-events-none absolute -right-12 -top-20 h-56 w-56 rounded-full bg-violet-400/20 blur-3xl" />
             <div className="relative shrink-0"><Avatar src={user?.avatar ?? undefined} name={user?.name} size="xl" className="h-24 w-24 border-4 border-white/20 bg-violet-100 text-violet-800 shadow-xl" /><input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} /><button type="button" aria-label="Change profile photo" title="Change profile photo" disabled={uploadAvatarMutation.isPending} onClick={() => avatarInputRef.current?.click()} className="absolute -bottom-1 -right-1 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-violet-950 bg-white text-violet-700 shadow-md transition hover:scale-105 hover:bg-violet-50 focus:outline-none focus:ring-4 focus:ring-white/30 disabled:cursor-not-allowed disabled:opacity-60"><Camera className="h-4 w-4" /></button></div>
@@ -90,17 +101,51 @@ export default function ProfilePage() {
                 <div><label className={labelClass} htmlFor="phone">Phone number</label><input id="phone" placeholder="Add a phone number" className={inputClass} {...register("phone")} />{errors.phone && <p className="mt-1.5 text-xs font-medium text-rose-600">{errors.phone.message}</p>}</div><div><label className={labelClass} htmlFor="profession">Profession</label><input id="profession" placeholder="Your profession" className={inputClass} {...register("profession")} /></div><div><label className={labelClass} htmlFor="address">Address</label><input id="address" placeholder="Your address" className={inputClass} {...register("address")} /></div>
                 <div className="sm:col-span-2"><label className={labelClass} htmlFor="bio">Bio</label><textarea id="bio" placeholder="Tell learners and colleagues a little about yourself" rows={4} className={`${inputClass} resize-y`} {...register("bio")} />{errors.bio && <p className="mt-1.5 text-xs font-medium text-rose-600">{errors.bio.message}</p>}</div>
               </div>
-              <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"><p className="text-xs text-slate-500 dark:text-slate-400">Changes are saved securely to your account.</p><Button type="submit" loading={isPending} disabled={!isDirty} className="bg-violet-600 hover:bg-violet-700 focus-visible:ring-violet-500">Save changes</Button></div>
+              <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"><p className="text-xs text-slate-500 dark:text-slate-400">Changes are saved securely to your account.</p><Button type="submit" loading={isPending} disabled={!isDirty || isPending} className="bg-violet-600 hover:bg-violet-700 focus-visible:ring-violet-500 transition-all duration-200">{showSaved ? <Check className="h-4 w-4" /> : <span>Save changes</span>}</Button></div>
             </form>
           </section>
 
           <aside className="space-y-6">
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300"><ShieldCheck className="h-5 w-5" /></span><div><h2 className="font-bold text-slate-900 dark:text-white">Account & security</h2><p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Your authentication status.</p></div></div><dl className="mt-5 divide-y divide-slate-100 border-y border-slate-100 dark:divide-slate-800 dark:border-slate-800"><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><BadgeCheck className="h-4 w-4 text-violet-600" />Account status</dt><dd className={`text-xs font-semibold ${user?.isActivated ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>{user?.isActivated ? "Active" : "Pending"}</dd></div><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CircleUserRound className="h-4 w-4 text-violet-600" />Sign-in method</dt><dd className="capitalize text-xs font-semibold text-slate-900 dark:text-white">{user?.provider ?? "Not available"}</dd></div><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><Clock3 className="h-4 w-4 text-violet-600" />Last updated</dt><dd className="text-xs font-semibold text-slate-900 dark:text-white">{formatDate(user?.updatedAt)}</dd></div></dl></section>
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300"><ShieldCheck className="h-5 w-5" /></span><div><h2 className="font-bold text-slate-900 dark:text-white">Account & security</h2><p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Your authentication status.</p></div></div><dl className="mt-5 divide-y divide-slate-100 border-y border-slate-100 dark:divide-slate-800 dark:border-slate-800"><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><BadgeCheck className="h-4 w-4 text-violet-600" />Account status</dt><dd className={`text-xs font-semibold ${user?.isActivated ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>{user?.isActivated ? "Active" : "Pending"}</dd></div><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><CircleUserRound className="h-4 w-4 text-violet-600" />Sign-in method</dt><dd className="capitalize text-xs font-semibold text-slate-900 dark:text-white">{user?.provider ?? "Not available"}</dd></div><div className="flex items-center justify-between gap-4 py-3.5"><dt className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><Clock3 className="h-4 w-4 text-violet-600" />Last updated</dt><dd className="text-xs font-semibold text-slate-900 dark:text-white">{formatDate(user?.updatedAt)}</dd></div></dl>
+              <div className="mt-5 border-t border-slate-100 pt-5 dark:border-slate-800">
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="ghost" leftIcon={<LogOut className="h-4 w-4" />} onClick={() => setShowLogoutConfirm(true)} loading={isLogoutPending} disabled={isLogoutPending} className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30">
+                    Logout
+                  </Button>
+                  <Button variant="danger" leftIcon={<Trash2 className="h-4 w-4" />} onClick={() => setShowDeleteConfirm(true)} loading={isDeletePending} disabled={isDeletePending}>
+                    Delete account
+                  </Button>
+                </div>
+              </div>
+            </section>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><h2 className="font-bold text-slate-900 dark:text-white">Password</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Update your account password securely.</p><Link href="/change-password" className="mt-4 inline-flex text-sm font-semibold text-violet-700 hover:underline dark:text-violet-300">Change password</Link></div>
             <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-5 shadow-sm dark:border-violet-900/50 dark:bg-violet-950/20"><div className="flex gap-3"><CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-violet-700 dark:text-violet-300" /><div><h2 className="font-bold text-slate-900 dark:text-white">Profile photo</h2><p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">Use a clear, professional image so your application community can recognize you.</p><button type="button" disabled={uploadAvatarMutation.isPending} onClick={() => avatarInputRef.current?.click()} className="mt-4 text-sm font-semibold text-violet-700 transition hover:text-violet-900 focus:outline-none focus:underline disabled:cursor-not-allowed disabled:opacity-60 dark:text-violet-300 dark:hover:text-violet-100">{uploadAvatarMutation.isPending ? "Uploading photo…" : "Update profile photo"}</button></div></div></section>
           </aside>
         </div>
       </div>
-    </main>
+</main>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        onOpenChange={setShowLogoutConfirm}
+        title="Log out of your account?"
+        description="You will be signed out and need to log in again to access your account."
+        confirmText="Log out"
+        loading={isLogoutPending}
+        onConfirm={logout}
+      />
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Delete your account?"
+        description="This action is irreversible. All your data, including profile information, will be permanently deleted."
+        confirmText="Delete account"
+        cancelText="Cancel"
+        loading={isDeletePending}
+        destructive
+        onConfirm={deleteAccount}
+      />
+      
+    </>
   );
 }

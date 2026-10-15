@@ -119,11 +119,7 @@ The payment layer already works with generic `Order` items:
 
 ```js
 {
-  itemId,
-  itemType,
-  name,
-  price,
-  quantity
+  (itemId, itemType, name, price, quantity);
 }
 ```
 
@@ -279,9 +275,11 @@ POST /api/webhooks/stripe
 - The payment gateway credentials and callback URLs are environment driven.
 
 ## API contract validation
+
 The OpenAPI 3.1 contract is continuously checked against registered Express routes. Run `npm run api:contract:check` locally, or `npm run quality` for the complete quality/security gate.
 
 ## V3 hardening
+
 Payment attempts are idempotency/race hardened, coupon usage is tracked per customer, RBAC is dynamic, media privacy is enforced, and production environment validation is enabled.
 
 ## Error Handling

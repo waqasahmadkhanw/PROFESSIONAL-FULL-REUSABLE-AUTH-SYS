@@ -20,7 +20,9 @@ const cleanupUploadedFiles = async (req) => {
   if (req.files && typeof req.files === "object" && !Array.isArray(req.files)) {
     for (const list of Object.values(req.files)) if (Array.isArray(list)) files.push(...list);
   }
-  await Promise.all(files.map((file) => file?.path ? fs.unlink(file.path).catch(() => {}) : null));
+  await Promise.all(
+    files.map((file) => (file?.path ? fs.unlink(file.path).catch(() => {}) : null)),
+  );
 };
 
 export const errorHandler = (err, req, res, _next) => {
@@ -50,13 +52,18 @@ export const errorHandler = (err, req, res, _next) => {
     statusCode: statusCode >= 400 && statusCode <= 599 ? statusCode : 500,
     success: false,
     data: null,
-    message: isProduction && !isOperational
-      ? "Internal Server Error"
-      : normalized?.message || STATUS_MESSAGES[statusCode] || "Internal Server Error",
+    message:
+      isProduction && !isOperational
+        ? "Internal Server Error"
+        : normalized?.message || STATUS_MESSAGES[statusCode] || "Internal Server Error",
   };
 
   if (requestId) response.requestId = requestId;
-  if (Array.isArray(normalized?.errors) && normalized.errors.length && (isOperational || !isProduction)) {
+  if (
+    Array.isArray(normalized?.errors) &&
+    normalized.errors.length &&
+    (isOperational || !isProduction)
+  ) {
     response.errors = normalized.errors;
   }
 

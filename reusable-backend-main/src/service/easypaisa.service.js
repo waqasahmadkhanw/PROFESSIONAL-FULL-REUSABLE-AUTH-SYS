@@ -19,7 +19,10 @@ import easypaisaConfig from "../config/easypaisa.js";
 const requestJson = async (path, body) => {
   const base = new URL(easypaisaConfig.baseUrl);
   if (process.env.NODE_ENV === "production" && base.protocol !== "https:") {
-    const error = new Error("EasyPaisa base URL must use HTTPS in production"); error.code = "EASYPAISA_CONFIG"; error.status = 500; throw error;
+    const error = new Error("EasyPaisa base URL must use HTTPS in production");
+    error.code = "EASYPAISA_CONFIG";
+    error.status = 500;
+    throw error;
   }
   const url = new URL(path, base).toString();
 
@@ -68,9 +71,9 @@ export const createEasyPaisaCheckout = async ({
   amount, // in PKR
   email,
   mobileNumber,
-  paymentId = ""
+  paymentId = "",
 }) => {
-  const transactionId = `T_${String(orderId).slice(0,20)}_${paymentId ? String(paymentId).slice(-8) : crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+  const transactionId = `T_${String(orderId).slice(0, 20)}_${paymentId ? String(paymentId).slice(-8) : crypto.randomBytes(4).toString("hex").toUpperCase()}`;
   const orderReference = `Ref_${orderId}`;
   const amountPaise = `${Math.round(amount * 100)}`; // confirm with merchant docs (BD/EG/Africa differ)
   const integrity = easypaisaConfig.merchantAccount + transactionId + amountPaise;
@@ -80,7 +83,11 @@ export const createEasyPaisaCheckout = async ({
     .update(integrity)
     .digest("hex");
 
-  if (!transactionId || transactionId.length > 128) { const error = new Error("Invalid EasyPaisa transaction ID"); error.status = 400; throw error; }
+  if (!transactionId || transactionId.length > 128) {
+    const error = new Error("Invalid EasyPaisa transaction ID");
+    error.status = 400;
+    throw error;
+  }
   const payload = {
     amount: amountPaise,
     email: email || "",
@@ -116,8 +123,7 @@ export const createEasyPaisaCheckout = async ({
     result?.redirectURL ||
     "";
 
-  const gatewayTransactionId =
-    data?.transactionId || data?.txnId || transactionId;
+  const gatewayTransactionId = data?.transactionId || data?.txnId || transactionId;
 
   return {
     redirectUrl,
@@ -144,9 +150,10 @@ export const verifyEasyPaisaPayment = async ({ transactionId, orderRef }) => {
   const data = result?.Data || result?.data || result;
 
   // Common success indicators
-  const returnedAmount = data?.amount ?? data?.transactionAmount ?? data?.paidAmount ?? result?.amount ?? null;
+  const returnedAmount =
+    data?.amount ?? data?.transactionAmount ?? data?.paidAmount ?? result?.amount ?? null;
   const statusCode = String(
-    data?.statusCode ?? data?.status ?? result?.statusCode ?? result?.status ?? ""
+    data?.statusCode ?? data?.status ?? result?.statusCode ?? result?.status ?? "",
   );
 
   const isSuccess =
@@ -180,4 +187,3 @@ export const refundEasyPaisaPayment = async ({ transactionId, amount }) => {
   const result = await requestJson(easypaisaConfig.refundApi, payload);
   return { ...result };
 };
-

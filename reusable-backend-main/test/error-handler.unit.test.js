@@ -8,9 +8,18 @@ const createResponse = () => {
     headersSent: false,
     statusCode: null,
     body: null,
-    status(code) { this.statusCode = code; return this; },
-    json(payload) { this.body = payload; return this; },
-    end() { this.ended = true; return this; },
+    status(code) {
+      this.statusCode = code;
+      return this;
+    },
+    json(payload) {
+      this.body = payload;
+      return this;
+    },
+    end() {
+      this.ended = true;
+      return this;
+    },
   };
   return response;
 };
@@ -55,7 +64,12 @@ test("unexpected production failures do not leak internal details", () => {
 });
 
 test("invalid status codes are normalized to 500", () => {
-  const req = { id: "req-invalid", method: "GET", originalUrl: "/api/example", get: () => undefined };
+  const req = {
+    id: "req-invalid",
+    method: "GET",
+    originalUrl: "/api/example",
+    get: () => undefined,
+  };
   const res = createResponse();
   errorHandler(new ApiError(200, "not an error"), req, res, () => {});
 

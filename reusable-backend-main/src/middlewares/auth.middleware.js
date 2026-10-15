@@ -29,7 +29,9 @@ const authUser = async (req, _, next) => {
     }).lean();
     if (!session) throw new ApiError(401, "Session is invalid or expired");
 
-    const user = await User.findById(decoded._id).select("-password -resetPasswordToken -resetPasswordExpire");
+    const user = await User.findById(decoded._id).select(
+      "-password -resetPasswordToken -resetPasswordExpire",
+    );
     if (!user) throw new ApiError(401, "User not found");
     if (!user.isActivated) throw new ApiError(403, "Account is not activated");
 
@@ -42,20 +44,24 @@ const authUser = async (req, _, next) => {
   }
 };
 
-const authorizeRoles = (...allowedRoles) => (req, _, next) => {
-  if (!req.user) return next(new ApiError(401, "Unauthorized"));
-  if (!allowedRoles.includes(req.user.role)) return next(new ApiError(403, "Access denied"));
-  next();
-};
+const authorizeRoles =
+  (...allowedRoles) =>
+  (req, _, next) => {
+    if (!req.user) return next(new ApiError(401, "Unauthorized"));
+    if (!allowedRoles.includes(req.user.role)) return next(new ApiError(403, "Access denied"));
+    next();
+  };
 
-const authorizePermission = (...requiredPermissions) => (req, _, next) => {
-  if (!req.user) return next(new ApiError(401, "Unauthorized"));
-  if (!requiredPermissions.length) return next();
-  const permissions = req.userPermissions || [];
-  if (!requiredPermissions.every((permission) => permissions.includes(permission))) {
-    return next(new ApiError(403, "Permission denied"));
-  }
-  next();
-};
+const authorizePermission =
+  (...requiredPermissions) =>
+  (req, _, next) => {
+    if (!req.user) return next(new ApiError(401, "Unauthorized"));
+    if (!requiredPermissions.length) return next();
+    const permissions = req.userPermissions || [];
+    if (!requiredPermissions.every((permission) => permissions.includes(permission))) {
+      return next(new ApiError(403, "Permission denied"));
+    }
+    next();
+  };
 
 export { authUser, authorizeRoles, authorizePermission, resolvePermissions };

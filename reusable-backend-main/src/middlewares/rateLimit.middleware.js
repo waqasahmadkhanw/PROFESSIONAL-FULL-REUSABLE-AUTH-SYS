@@ -34,21 +34,15 @@ const createLimiter = ({ windowMs, max, prefix, message }) =>
     passOnStoreError: false,
   });
 
-const globalWindowMs = toPositiveInteger(
-  process.env.GLOBAL_RATE_LIMIT_WINDOW_MS,
-  15 * 60 * 1000
-);
+const globalWindowMs = toPositiveInteger(process.env.GLOBAL_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000);
 const globalMax = toPositiveInteger(process.env.GLOBAL_RATE_LIMIT, 300);
 
-const authWindowMs = toPositiveInteger(
-  process.env.AUTH_RATE_LIMIT_WINDOW_MS,
-  15 * 60 * 1000
-);
+const authWindowMs = toPositiveInteger(process.env.AUTH_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000);
 const authMax = toPositiveInteger(process.env.AUTH_RATE_LIMIT, 10);
 
 const registerWindowMs = toPositiveInteger(
   process.env.REGISTER_RATE_LIMIT_WINDOW_MS,
-  60 * 60 * 1000
+  60 * 60 * 1000,
 );
 const registerMax = toPositiveInteger(process.env.REGISTER_RATE_LIMIT, 20);
 

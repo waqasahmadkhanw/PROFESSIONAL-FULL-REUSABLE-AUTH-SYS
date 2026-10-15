@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PERMISSIONS, ALL_PERMISSIONS, DEFAULT_ROLE_PERMISSIONS } from "../src/constants/permissions.js";
+import {
+  PERMISSIONS,
+  ALL_PERMISSIONS,
+  DEFAULT_ROLE_PERMISSIONS,
+} from "../src/constants/permissions.js";
 import { clearAuditLogsRules } from "../src/validators/auditLog.validator.js";
 
 test("audit log permissions are separated", () => {

@@ -32,7 +32,7 @@ import couponRoutes from "./routes/coupon.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import securityRoutes from "./routes/security.routes.js";
 
-const app=express();
+const app = express();
 const trustProxy = process.env.TRUST_PROXY?.trim();
 if (trustProxy) {
   if (trustProxy === "false" || trustProxy === "0") {
@@ -41,26 +41,42 @@ if (trustProxy) {
     app.set("trust proxy", true);
   } else {
     const asNumber = Number(trustProxy);
-    app.set("trust proxy", Number.isInteger(asNumber) && asNumber >= 0 ? asNumber : trustProxy.split(",").map(v => v.trim()).filter(Boolean));
+    app.set(
+      "trust proxy",
+      Number.isInteger(asNumber) && asNumber >= 0
+        ? asNumber
+        : trustProxy
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean),
+    );
   }
 }
 
 app.use(requestId);
 
-const allowedOrigins=[process.env.WEB_URL,process.env.ADMIN_PANEL,process.env.LOCAL_WEB,process.env.LOCAL_ADMIN_PANEL]
-  .flatMap(v=>String(v||"").split(","))
-  .map(v=>v.trim())
+const allowedOrigins = [
+  process.env.WEB_URL,
+  process.env.ADMIN_PANEL,
+  process.env.LOCAL_WEB,
+  process.env.LOCAL_ADMIN_PANEL,
+]
+  .flatMap((v) => String(v || "").split(","))
+  .map((v) => v.trim())
   .filter(Boolean);
 
-app.use(cors({
-  origin:(origin,callback)=>{
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (allowedOrigins.length === 0 && process.env.NODE_ENV !== "production") return callback(null, true);
-    callback(new ApiError(403,"Origin is not allowed by CORS"));
-  },
-  credentials:true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (allowedOrigins.length === 0 && process.env.NODE_ENV !== "production")
+        return callback(null, true);
+      callback(new ApiError(403, "Origin is not allowed by CORS"));
+    },
+    credentials: true,
+  }),
+);
 app.use(helmet());
 app.use(httpLogger);
 app.use(metricsMiddleware);
@@ -69,8 +85,8 @@ app.use(hpp());
 // Stripe must receive the raw request body before express.json().
 // app.post("/api/webhooks/stripe",express.raw({type:"application/json"}),stripeWebhook);
 
-app.use(express.json({limit:"16kb"}));
-app.use(express.urlencoded({extended:true,limit:"16kb"}));
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 app.use(csrfProtection);
 // Strip Mongo operator keys ($ne, $gt, $where, dot-paths, etc.) from
@@ -85,19 +101,19 @@ app.use(docsRoutes);
 // available to load balancers/orchestrators during traffic spikes.
 app.use(globalRateLimiter);
 
-app.use("/api/user",userRoutes);
-app.use("/api/profile",profileRoutes);
-app.use("/api/users",userManagementRoutes);
-app.use("/api/roles",roleRoutes);
-app.use("/api/settings",settingsRoutes);
-app.use("/api/media",mediaRoutes);
-app.use("/api/notifications",notificationRoutes);
-app.use("/api/announcements",announcementRoutes);
-app.use("/api/events",eventRoutes);
-app.use("/api/audit-logs",auditLogRoutes);
-app.use("/api/orders",orderRoutes);
-app.use("/api/coupons",couponRoutes);
-app.use("/api/payments",paymentRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/users", userManagementRoutes);
+app.use("/api/roles", roleRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/announcements", announcementRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/coupons", couponRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/security", securityRoutes);
 
 app.use((req, _res, next) => next(new ApiError(404, "Route not found")));

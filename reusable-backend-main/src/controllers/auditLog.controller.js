@@ -1,70 +1,75 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-import {AuditLog} from "../models/auditLog.model.js"
+import { AuditLog } from "../models/auditLog.model.js";
 
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler.js"
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 const validateMongoId = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid MongoDB ID")
+    throw new ApiError(400, "Invalid MongoDB ID");
   }
-}
+};
 
 // =====================================================
 // GET ALL AUDIT LOGS (Admin)
 // =====================================================
 const getAllAuditLogs = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1)
-  const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 100)
-  const skip = (page - 1) * limit
-  const { action, resource, user, startDate, endDate } = req.query
-  const search = String(req.query.search || "").trim().slice(0, 100)
-  const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 100);
+  const skip = (page - 1) * limit;
+  const { action, resource, user, startDate, endDate } = req.query;
+  const search = String(req.query.search || "")
+    .trim()
+    .slice(0, 100);
+  const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  const query = {}
+  const query = {};
 
   if (search) {
     query.$or = [
       { action: { $regex: escapedSearch, $options: "i" } },
       { resource: { $regex: escapedSearch, $options: "i" } },
-    ]
+    ];
   }
-  if (action) query.action = action
-  if (resource) query.resource = resource
+  if (action) query.action = action;
+  if (resource) query.resource = resource;
   if (user) {
-    validateMongoId(user)
-    query.user = user
+    validateMongoId(user);
+    query.user = user;
   }
 
   // Date range filter
   if (startDate || endDate) {
-    query.createdAt = {}
-    if (startDate) { const date = new Date(startDate)
- if (Number.isNaN(date.getTime())) throw new ApiError(400, "Invalid startDate")
- query.createdAt.$gte = date
- }
-    if (endDate) { const date = new Date(endDate)
- if (Number.isNaN(date.getTime())) throw new ApiError(400, "Invalid endDate")
- query.createdAt.$lte = date
- }
-    if (query.createdAt.$gte && query.createdAt.$lte && query.createdAt.$gte > query.createdAt.$lte) throw new ApiError(400, "startDate must be before endDate")
+    query.createdAt = {};
+    if (startDate) {
+      const date = new Date(startDate);
+      if (Number.isNaN(date.getTime())) throw new ApiError(400, "Invalid startDate");
+      query.createdAt.$gte = date;
+    }
+    if (endDate) {
+      const date = new Date(endDate);
+      if (Number.isNaN(date.getTime())) throw new ApiError(400, "Invalid endDate");
+      query.createdAt.$lte = date;
+    }
+    if (query.createdAt.$gte && query.createdAt.$lte && query.createdAt.$gte > query.createdAt.$lte)
+      throw new ApiError(400, "startDate must be before endDate");
   }
 
   const logs = await AuditLog.find(query)
     .populate("user", "name email")
     .sort({ createdAt: -1 })
     .skip(skip)
-    .limit(limit)
+    .limit(limit);
 
-  const total = await AuditLog.countDocuments(query)
+  const total = await AuditLog.countDocuments(query);
 
   return res.status(200).json(
     new ApiResponse(
@@ -74,43 +79,41 @@ const getAllAuditLogs = asyncHandler(async (req, res) => {
         count: logs.length,
         logs,
       },
-      "Audit logs fetched successfully"
-    )
-  )
-})
+      "Audit logs fetched successfully",
+    ),
+  );
+});
 
 // =====================================================
 // GET SINGLE AUDIT LOG (Admin)
 // =====================================================
 const getAuditLogById = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  const { id } = req.params
-  validateMongoId(id)
+  const { id } = req.params;
+  validateMongoId(id);
 
-  const log = await AuditLog.findById(id).populate("user", "name email")
+  const log = await AuditLog.findById(id).populate("user", "name email");
   if (!log) {
-    throw new ApiError(404, "Audit log not found")
+    throw new ApiError(404, "Audit log not found");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, log, "Audit log fetched successfully")
-  )
-})
+  return res.status(200).json(new ApiResponse(200, log, "Audit log fetched successfully"));
+});
 
 // =====================================================
 // GET AUDIT LOG SUMMARY / STATS (Admin)
 // =====================================================
 const getAuditLogStats = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
   const stats = await AuditLog.aggregate([
     {
@@ -121,9 +124,9 @@ const getAuditLogStats = asyncHandler(async (req, res) => {
     },
     { $sort: { count: -1 } },
     { $limit: 20 },
-  ])
+  ]);
 
-  const totalLogs = await AuditLog.countDocuments()
+  const totalLogs = await AuditLog.countDocuments();
 
   return res.status(200).json(
     new ApiResponse(
@@ -132,57 +135,47 @@ const getAuditLogStats = asyncHandler(async (req, res) => {
         totalLogs,
         byAction: stats,
       },
-      "Audit log stats fetched successfully"
-    )
-  )
-})
+      "Audit log stats fetched successfully",
+    ),
+  );
+});
 
 // =====================================================
 // DELETE AUDIT LOG (Admin)
 // =====================================================
 const deleteAuditLog = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  const { id } = req.params
-  validateMongoId(id)
+  const { id } = req.params;
+  validateMongoId(id);
 
-  const log = await AuditLog.findById(id)
+  const log = await AuditLog.findById(id);
   if (!log) {
-    throw new ApiError(404, "Audit log not found")
+    throw new ApiError(404, "Audit log not found");
   }
 
-  await log.deleteOne()
+  await log.deleteOne();
 
-  return res.status(200).json(
-    new ApiResponse(200, null, "Audit log deleted successfully")
-  )
-})
+  return res.status(200).json(new ApiResponse(200, null, "Audit log deleted successfully"));
+});
 
 // =====================================================
 // CLEAR AUDIT LOGS (Admin) — optional bulk clear
 // =====================================================
 const clearAuditLogs = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  if (req.body?.confirm !== "DELETE_ALL") throw new ApiError(400, "Confirmation is required")
-  await AuditLog.deleteMany({})
-  return res.status(200).json(
-    new ApiResponse(200, null, "Audit logs cleared successfully")
-  )
-})
+  if (req.body?.confirm !== "DELETE_ALL") throw new ApiError(400, "Confirmation is required");
+  await AuditLog.deleteMany({});
+  return res.status(200).json(new ApiResponse(200, null, "Audit logs cleared successfully"));
+});
 
-export {
-    getAllAuditLogs,
-    getAuditLogById,
-    getAuditLogStats,
-    deleteAuditLog,
-    clearAuditLogs,
-}
+export { getAllAuditLogs, getAuditLogById, getAuditLogStats, deleteAuditLog, clearAuditLogs };

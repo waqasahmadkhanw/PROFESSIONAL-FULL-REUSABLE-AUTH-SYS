@@ -1,19 +1,12 @@
 import { ApiError } from "../utils/ApiError.js";
-import {
-  CSRF_COOKIE_NAME,
-  CSRF_HEADER_NAME,
-  generateCsrfToken,
-  safeEqual,
-} from "../utils/csrf.js";
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME, generateCsrfToken, safeEqual } from "../utils/csrf.js";
 import { csrfCookieOptions } from "../utils/csrf.js";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
-const CSRF_EXEMPT_PATHS = new Set([
-  "/api/security/csrf",
-  "/api/webhooks/stripe",
-]);
+const CSRF_EXEMPT_PATHS = new Set(["/api/security/csrf", "/api/webhooks/stripe"]);
 
-const hasAuthenticationCookie = (req) => Boolean(req.cookies?.accessToken || req.cookies?.refreshToken);
+const hasAuthenticationCookie = (req) =>
+  Boolean(req.cookies?.accessToken || req.cookies?.refreshToken);
 
 export const csrfToken = (req, res) => {
   const existing = req.cookies?.[CSRF_COOKIE_NAME];

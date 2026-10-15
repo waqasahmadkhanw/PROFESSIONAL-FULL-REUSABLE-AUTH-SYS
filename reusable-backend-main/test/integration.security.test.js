@@ -51,7 +51,10 @@ test("CSRF endpoint issues a token without requiring authentication", async () =
 test("cookie-authenticated mutation without CSRF token is rejected", async () => {
   const response = await fetch(`${baseUrl}/api/user/logout-user`, {
     method: "POST",
-    headers: { Cookie: "accessToken=fake-access-token; refreshToken=fake-refresh-token", "Content-Type": "application/json" },
+    headers: {
+      Cookie: "accessToken=fake-access-token; refreshToken=fake-refresh-token",
+      "Content-Type": "application/json",
+    },
     body: "{}",
   });
   assert.equal(response.status, 403);

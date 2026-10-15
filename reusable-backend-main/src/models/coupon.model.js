@@ -43,7 +43,6 @@ couponSchema.pre("validate", function (next) {
     this.invalidate("expiryDate", "Expiry must be after start");
   this.applicableTo = [...new Set(this.applicableTo.map(String))];
   next();
-  
 });
 
 couponSchema.methods.isWithinValidity = function () {

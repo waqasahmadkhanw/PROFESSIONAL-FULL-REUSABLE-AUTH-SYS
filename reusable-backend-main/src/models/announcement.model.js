@@ -40,12 +40,8 @@ const announcementSchema = new Schema(
 
 announcementSchema.pre("validate", function (next) {
   if (this.audience === "role" && !this.audienceRole)
-    this.invalidate(
-      "audienceRole",
-      "audienceRole is required for role audience",
-    );
-  if (this.status === "published" && !this.publishedAt)
-    this.publishedAt = new Date();
+    this.invalidate("audienceRole", "audienceRole is required for role audience");
+  if (this.status === "published" && !this.publishedAt) this.publishedAt = new Date();
   next();
 });
 

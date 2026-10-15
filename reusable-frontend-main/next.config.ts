@@ -15,7 +15,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
   poweredByHeader: false,
   images: {
     remotePatterns: [

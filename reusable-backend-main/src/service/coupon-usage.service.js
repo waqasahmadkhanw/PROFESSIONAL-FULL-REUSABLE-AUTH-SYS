@@ -34,7 +34,7 @@ export const claimCouponUsageAtomic = async ({ payment, order, session }) => {
         $expr: { $lt: ["$usageCount", perUserLimit] },
       },
       { $inc: { usageCount: 1 }, $set: { lastUsedAt: new Date() } },
-      { new: true, upsert: true, session, setDefaultsOnInsert: true }
+      { new: true, upsert: true, session, setDefaultsOnInsert: true },
     );
   } catch (error) {
     if (isRetryableDuplicate(error)) {
@@ -47,26 +47,32 @@ export const claimCouponUsageAtomic = async ({ payment, order, session }) => {
     throw new ApiError(409, "Coupon usage limit for this user was reached");
   }
 
-  const totalFilter = coupon.maxUses > 0
-    ? { _id: coupon._id, $expr: { $lt: ["$usedCount", "$maxUses"] } }
-    : { _id: coupon._id };
+  const totalFilter =
+    coupon.maxUses > 0
+      ? { _id: coupon._id, $expr: { $lt: ["$usedCount", "$maxUses"] } }
+      : { _id: coupon._id };
 
   const updatedCoupon = await Coupon.findOneAndUpdate(
     totalFilter,
     { $inc: { usedCount: 1 } },
-    { new: true, session }
+    { new: true, session },
   );
 
   if (!updatedCoupon) {
     throw new ApiError(409, "Coupon usage limit was reached");
   }
 
-  await CouponUsage.create([{
-    coupon: coupon._id,
-    customer: customerId,
-    payment: payment._id,
-    order: order._id,
-  }], { session });
+  await CouponUsage.create(
+    [
+      {
+        coupon: coupon._id,
+        customer: customerId,
+        payment: payment._id,
+        order: order._id,
+      },
+    ],
+    { session },
+  );
 
   await Payment.updateOne(
     { _id: payment._id, couponUsageClaimed: false },
@@ -77,7 +83,7 @@ export const claimCouponUsageAtomic = async ({ payment, order, session }) => {
         couponCode: order.couponCode || "",
       },
     },
-    { session }
+    { session },
   );
 
   return true;

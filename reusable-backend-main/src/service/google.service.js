@@ -24,9 +24,7 @@ const getGoogleClient = () => {
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
   if (!clientId) {
-    const error = new Error(
-      "GOOGLE_CLIENT_ID is not configured in environment variables"
-    );
+    const error = new Error("GOOGLE_CLIENT_ID is not configured in environment variables");
     error.statusCode = 500;
     throw error;
   }
@@ -88,4 +86,3 @@ export const verifyGoogleIdToken = async (idToken) => {
 };
 
 export default { verifyGoogleIdToken };
-

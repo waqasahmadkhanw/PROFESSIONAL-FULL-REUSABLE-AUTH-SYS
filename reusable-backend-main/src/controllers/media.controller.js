@@ -1,25 +1,25 @@
-import mongoose from "mongoose"
-import {Media} from "../models/media.model.js"
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler.js"
-import {uploadOnCloudinary, deleteFromCloudinary} from "../utils/cloudinary.js"
-import {PERMISSIONS} from "../constants/permissions.js"
+import mongoose from "mongoose";
+import { Media } from "../models/media.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
+import { PERMISSIONS } from "../constants/permissions.js";
 
 const id = (value) => {
-  if (!mongoose.Types.ObjectId.isValid(value)) throw new ApiError(400, "Invalid media ID")
-}
+  if (!mongoose.Types.ObjectId.isValid(value)) throw new ApiError(400, "Invalid media ID");
+};
 
 const uploadMedia = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  if (!req.file?.path) throw new ApiError(400, "File is required")
-  const uploaded = await uploadOnCloudinary(req.file.path)
-  if (!uploaded) throw new ApiError(500, "Cloudinary upload failed")
+  if (!req.file?.path) throw new ApiError(400, "File is required");
+  const uploaded = await uploadOnCloudinary(req.file.path);
+  if (!uploaded) throw new ApiError(500, "Cloudinary upload failed");
 
   try {
     const media = await Media.create({
@@ -37,96 +37,119 @@ const uploadMedia = asyncHandler(async (req, res) => {
       mediaType: req.body.mediaType || "other",
       usage: req.body.usage || "",
       altText: req.body.altText || "",
-      isPublic: req.body.isPublic === undefined ? true : req.body.isPublic === true || req.body.isPublic === "true",
-    })
-    return res.status(201).json(new ApiResponse(201, media, "Media uploaded successfully"))
+      isPublic:
+        req.body.isPublic === undefined
+          ? true
+          : req.body.isPublic === true || req.body.isPublic === "true",
+    });
+    return res.status(201).json(new ApiResponse(201, media, "Media uploaded successfully"));
   } catch (error) {
-    await deleteFromCloudinary(uploaded.public_id, uploaded.resource_type || "image").catch(() => {})
-    throw error
+    await deleteFromCloudinary(uploaded.public_id, uploaded.resource_type || "image").catch(
+      () => {},
+    );
+    throw error;
   }
-})
+});
 
 const getAllMedia = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1)
-  const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 100)
-  const canManage = (req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA)
-  const filter = { status: "active" }
-  if (req.query.mediaType) filter.mediaType = req.query.mediaType
-  if (req.query.usage) filter.usage = req.query.usage
+  const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 100);
+  const canManage = (req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA);
+  const filter = { status: "active" };
+  if (req.query.mediaType) filter.mediaType = req.query.mediaType;
+  if (req.query.usage) filter.usage = req.query.usage;
   if (req.query.uploadedBy) {
-    id(req.query.uploadedBy)
-    if (!canManage && req.query.uploadedBy !== req.user._id.toString()) throw new ApiError(403, "Not authorized to filter another user's media")
-    filter.uploadedBy = req.query.uploadedBy
+    id(req.query.uploadedBy);
+    if (!canManage && req.query.uploadedBy !== req.user._id.toString())
+      throw new ApiError(403, "Not authorized to filter another user's media");
+    filter.uploadedBy = req.query.uploadedBy;
   }
-  if (!canManage && filter.uploadedBy?.toString() !== req.user._id.toString()) filter.isPublic = true
+  if (!canManage && filter.uploadedBy?.toString() !== req.user._id.toString())
+    filter.isPublic = true;
 
   const [media, total] = await Promise.all([
-    Media.find(filter).populate("uploadedBy", "name email").sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+    Media.find(filter)
+      .populate("uploadedBy", "name email")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit),
     Media.countDocuments(filter),
-  ])
-  return res.status(200).json(new ApiResponse(200, { media, pagination: { total, page, pages: Math.ceil(total / limit) } }, "Media fetched successfully"))
-})
+  ]);
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { media, pagination: { total, page, pages: Math.ceil(total / limit) } },
+        "Media fetched successfully",
+      ),
+    );
+});
 
 const getMediaById = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  id(req.params.id)
-  const media = await Media.findById(req.params.id).populate("uploadedBy", "name email")
-  if (!media) throw new ApiError(404, "Media not found")
-  const canManage = (req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA)
-  const isOwner = media.uploadedBy._id.toString() === req.user._id.toString()
-  if (media.status !== "active" || (!media.isPublic && !isOwner && !canManage)) throw new ApiError(404, "Media not found")
-  return res.status(200).json(new ApiResponse(200, media, "Media fetched successfully"))
-})
+  id(req.params.id);
+  const media = await Media.findById(req.params.id).populate("uploadedBy", "name email");
+  if (!media) throw new ApiError(404, "Media not found");
+  const canManage = (req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA);
+  const isOwner = media.uploadedBy._id.toString() === req.user._id.toString();
+  if (media.status !== "active" || (!media.isPublic && !isOwner && !canManage))
+    throw new ApiError(404, "Media not found");
+  return res.status(200).json(new ApiResponse(200, media, "Media fetched successfully"));
+});
 
 const updateMedia = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  id(req.params.id)
-  const media = await Media.findById(req.params.id)
-  if (!media) throw new ApiError(404, "Media not found")
-  if (!(req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA) && media.uploadedBy.toString() !== req.user._id.toString()) throw new ApiError(403, "Not authorized")
-  for (const field of ["altText", "usage", "isPublic", "mediaType"]) if (req.body[field] !== undefined) media[field] = req.body[field]
-  await media.save()
-  return res.status(200).json(new ApiResponse(200, media, "Media updated successfully"))
-})
+  id(req.params.id);
+  const media = await Media.findById(req.params.id);
+  if (!media) throw new ApiError(404, "Media not found");
+  if (
+    !(req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA) &&
+    media.uploadedBy.toString() !== req.user._id.toString()
+  )
+    throw new ApiError(403, "Not authorized");
+  for (const field of ["altText", "usage", "isPublic", "mediaType"])
+    if (req.body[field] !== undefined) media[field] = req.body[field];
+  await media.save();
+  return res.status(200).json(new ApiResponse(200, media, "Media updated successfully"));
+});
 
 const deleteMedia = asyncHandler(async (req, res) => {
-    // 1. Get required data from req.body, req.params, or req.query
-    // 2. Validate the request data and authorization
-    // 3. Perform the required database operation
-    // 4. Check the operation result and handle missing data
-    // 5. Return the successful API response
+  // 1. Get required data from req.body, req.params, or req.query
+  // 2. Validate the request data and authorization
+  // 3. Perform the required database operation
+  // 4. Check the operation result and handle missing data
+  // 5. Return the successful API response
 
-  id(req.params.id)
-  const media = await Media.findById(req.params.id)
-  if (!media) throw new ApiError(404, "Media not found")
-  if (!(req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA) && media.uploadedBy.toString() !== req.user._id.toString()) throw new ApiError(403, "Not authorized")
-  media.status = "deleted"
-  media.isPublic = false
-  await media.save()
-  await deleteFromCloudinary(media.publicId, media.resourceType).catch(() => {})
-  return res.status(200).json(new ApiResponse(200, null, "Media deleted successfully"))
-})
+  id(req.params.id);
+  const media = await Media.findById(req.params.id);
+  if (!media) throw new ApiError(404, "Media not found");
+  if (
+    !(req.userPermissions || []).includes(PERMISSIONS.MANAGE_MEDIA) &&
+    media.uploadedBy.toString() !== req.user._id.toString()
+  )
+    throw new ApiError(403, "Not authorized");
+  media.status = "deleted";
+  media.isPublic = false;
+  await media.save();
+  await deleteFromCloudinary(media.publicId, media.resourceType).catch(() => {});
+  return res.status(200).json(new ApiResponse(200, null, "Media deleted successfully"));
+});
 
-export {
-    uploadMedia,
-    getAllMedia,
-    getMediaById,
-    updateMedia,
-    deleteMedia,
-}
+export { uploadMedia, getAllMedia, getMediaById, updateMedia, deleteMedia };
