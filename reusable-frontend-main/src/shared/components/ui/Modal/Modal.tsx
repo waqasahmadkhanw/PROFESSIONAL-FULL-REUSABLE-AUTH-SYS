@@ -9,7 +9,16 @@ interface ModalProps {
   title: string;
   description?: string;
   children: ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
+
+const sizeClasses = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  full: 'max-w-4xl',
+};
 
 export function Modal({
   open,
@@ -17,6 +26,7 @@ export function Modal({
   title,
   description,
   children,
+  size = 'md',
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -25,44 +35,68 @@ export function Modal({
     >
       <Dialog.Portal>
         <Dialog.Overlay
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
+          aria-hidden="true"
         />
 
         <Dialog.Content
-          className="
+          className={`
             fixed
             left-1/2
             top-1/2
             w-full
-            max-w-lg
             -translate-x-1/2
             -translate-y-1/2
-            rounded-xl
-            bg-white
-            text-slate-900
+            rounded-2xl
+            bg-background
+            text-foreground
             border
-            border-slate-200
-            dark:bg-slate-900
-            dark:text-slate-100
-            dark:border-slate-800
-            p-6
+            border-border
             shadow-xl
+            p-6
             focus:outline-none
-          "
+            animate-scale-in
+            ${sizeClasses[size]}
+          `}
         >
-          <Dialog.Title
-            className="text-xl font-semibold text-slate-900 dark:text-white"
+          <Dialog.Close
+            className="
+              absolute
+              right-4
+              top-4
+              rounded-lg
+              p-1.5
+              text-foreground-subtle
+              hover:text-foreground
+              hover:bg-surface
+              transition-colors
+              duration-200
+              focus-visible:ring-2
+              focus-visible:ring-primary/30
+            "
+            aria-label="Close dialog"
           >
-            {title}
-          </Dialog.Title>
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </Dialog.Close>
 
-          {description && (
-            <Dialog.Description
-              className="mt-2 text-sm text-slate-600 dark:text-slate-400"
+          <div className="mb-4">
+            <Dialog.Title
+              className="text-lg font-semibold text-foreground"
             >
-              {description}
-            </Dialog.Description>
-          )}
+              {title}
+            </Dialog.Title>
+
+            {description && (
+              <Dialog.Description
+                className="mt-1.5 text-sm text-foreground-muted"
+              >
+                {description}
+              </Dialog.Description>
+            )}
+          </div>
 
           <div className="mt-6">
             {children}

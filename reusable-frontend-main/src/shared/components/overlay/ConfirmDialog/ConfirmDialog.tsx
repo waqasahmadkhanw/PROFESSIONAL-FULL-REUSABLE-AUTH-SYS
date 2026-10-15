@@ -36,7 +36,10 @@ export function ConfirmDialog({
       onOpenChange={onOpenChange}
     >
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        <AlertDialog.Overlay
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
+          aria-hidden="true"
+        />
 
         <AlertDialog.Content
           className="
@@ -47,30 +50,31 @@ export function ConfirmDialog({
             max-w-md
             -translate-x-1/2
             -translate-y-1/2
-            rounded-xl
-            bg-white
-            text-slate-900
+            rounded-2xl
+            bg-background
+            text-foreground
             border
-            border-slate-200
-            dark:bg-slate-900
-            dark:text-slate-100
-            dark:border-slate-800
-            p-6
+            border-border
             shadow-xl
+            p-6
             focus:outline-none
+            animate-scale-in
           "
         >
-          <AlertDialog.Title className="text-lg font-semibold text-slate-900 dark:text-white">
+          <AlertDialog.Title className="text-lg font-semibold text-foreground">
             {title}
           </AlertDialog.Title>
 
-          <AlertDialog.Description className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <AlertDialog.Description className="mt-2 text-sm text-foreground-muted">
             {description}
           </AlertDialog.Description>
 
           <div className="mt-6 flex justify-end gap-3">
             <AlertDialog.Cancel asChild>
-              <Button variant="outline">
+              <Button
+                variant="ghost"
+                size="md"
+              >
                 {cancelText}
               </Button>
             </AlertDialog.Cancel>
@@ -78,6 +82,7 @@ export function ConfirmDialog({
             <AlertDialog.Action asChild>
               <Button
                 variant={destructive ? 'danger' : 'primary'}
+                size="md"
                 loading={loading}
                 onClick={onConfirm}
               >

@@ -25,6 +25,7 @@ export const Textarea = forwardRef<
       error,
       className = '',
       disabled,
+      required,
       rows = 4,
       ...props
     },
@@ -32,15 +33,20 @@ export const Textarea = forwardRef<
   ) => {
     const generatedId = useId();
     const textareaId = id ?? generatedId;
+    const errorId = `${textareaId}-error`;
+    const helperId = `${textareaId}-helper`;
 
     return (
       <div className="w-full">
         {label && (
           <label
             htmlFor={textareaId}
-            className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-foreground-muted"
           >
             {label}
+            {required && (
+              <span className="ml-1 text-danger" aria-hidden="true">*</span>
+            )}
           </label>
         )}
 
@@ -49,39 +55,35 @@ export const Textarea = forwardRef<
           id={textareaId}
           rows={rows}
           disabled={disabled}
+          required={required}
           aria-invalid={!!error}
-          aria-describedby={
-            error
-              ? `${textareaId}-error`
-              : helperText
-              ? `${textareaId}-helper`
-              : undefined
-          }
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
+          aria-required={required}
           className={`
             w-full
-            rounded-lg
+            rounded-xl
             border
-            border-slate-300
-            bg-white
-            text-slate-900
-            dark:border-slate-800
-            dark:bg-slate-900
-            dark:text-white
-            px-3
-            py-2.5
+            bg-background
+            px-4
+            py-3
             text-sm
+            text-foreground
             outline-none
-            transition-colors
+            transition-all
+            duration-200
             resize-y
-            placeholder:text-slate-400
-            dark:placeholder:text-slate-500
-            focus:border-indigo-500
-            focus:ring-2
-            focus:ring-indigo-500/20
+            min-h-[100px]
+            placeholder:text-foreground-subtle
             disabled:cursor-not-allowed
-            disabled:bg-slate-100
-            dark:disabled:bg-slate-800/50
-            ${error ? 'border-red-500' : ''}
+            disabled:opacity-50
+            focus:ring-2
+            focus:ring-primary/30
+            focus:border-primary
+            ${
+              error
+                ? 'border-danger focus:border-danger focus:ring-danger/30'
+                : 'border-border hover:border-border-strong'
+            }
             ${className}
           `}
           {...props}
@@ -89,8 +91,8 @@ export const Textarea = forwardRef<
 
         {helperText && !error && (
           <p
-            id={`${textareaId}-helper`}
-            className="mt-1 text-xs text-slate-600 dark:text-slate-400"
+            id={helperId}
+            className="mt-1.5 text-xs text-foreground-subtle"
           >
             {helperText}
           </p>
@@ -98,9 +100,13 @@ export const Textarea = forwardRef<
 
         {error && (
           <p
-            id={`${textareaId}-error`}
-            className="mt-1 text-xs text-red-600 dark:text-red-400"
+            id={errorId}
+            className="mt-1.5 text-xs text-danger flex items-center gap-1"
+            role="alert"
           >
+            <svg className="h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
             {error}
           </p>
         )}

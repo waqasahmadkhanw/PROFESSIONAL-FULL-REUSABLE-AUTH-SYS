@@ -2,15 +2,17 @@ import { Spinner } from "@/shared/components/ui";
 
 interface LoadingProps {
   message?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function Loading({
   message = "Loading...",
+  size = 'md',
 }: LoadingProps) {
   return (
-    <div className="page-shell flex min-h-[260px] flex-col items-center justify-center gap-4 rounded-3xl px-6 py-10 text-center">
-      <Spinner size="lg" />
-      <p className="text-sm text-slate-600 dark:text-slate-300">
+    <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-2xl bg-surface p-8 text-center border border-border">
+      <Spinner size={size} />
+      <p className="text-sm text-foreground-muted">
         {message}
       </p>
     </div>

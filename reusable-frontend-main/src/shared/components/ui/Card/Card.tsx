@@ -1,19 +1,29 @@
 import { HTMLAttributes } from 'react';
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {}
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'elevated' | 'outlined';
+}
 
 interface CardSectionProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function Card({
+  variant = 'default',
   className = '',
   children,
   ...props
 }: CardProps) {
+  const variantClasses = {
+    default: 'bg-background border border-border shadow-sm',
+    elevated: 'bg-surface-elevated border border-border shadow-md',
+    outlined: 'bg-transparent border-2 border-border shadow-none',
+  };
+
   return (
     <div
       className={`
-        glass-panel
-        rounded-3xl
+        rounded-2xl
+        transition-shadow duration-200
+        ${variantClasses[variant]}
         ${className}
       `}
       {...props}
@@ -30,7 +40,7 @@ export function CardHeader({
 }: CardSectionProps) {
   return (
     <div
-      className={`border-b border-slate-200 dark:border-white/10 p-6 ${className}`}
+      className={`border-b border-border p-6 ${className}`}
       {...props}
     >
       {children}
@@ -45,7 +55,7 @@ export function CardTitle({
 }: CardSectionProps) {
   return (
     <h3
-      className={`text-lg font-semibold text-slate-900 dark:text-white ${className}`}
+      className={`text-lg font-semibold text-foreground ${className}`}
       {...props}
     >
       {children}
@@ -60,7 +70,7 @@ export function CardDescription({
 }: CardSectionProps) {
   return (
     <p
-      className={`mt-1 text-sm text-slate-600 dark:text-slate-300 ${className}`}
+      className={`mt-1 text-sm text-foreground-muted ${className}`}
       {...props}
     >
       {children}
@@ -90,7 +100,7 @@ export function CardFooter({
 }: CardSectionProps) {
   return (
     <div
-      className={`border-t border-slate-200 dark:border-white/10 p-6 ${className}`}
+      className={`border-t border-border p-6 ${className}`}
       {...props}
     >
       {children}

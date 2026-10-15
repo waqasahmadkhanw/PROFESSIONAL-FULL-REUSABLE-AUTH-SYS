@@ -21,61 +21,61 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       helperText,
       className = '',
       id,
+      disabled,
+      required,
       ...props
     },
     ref
   ) => {
     const generatedId = useId();
     const inputId = id ?? generatedId;
+    const errorId = `${inputId}-error`;
+    const helperId = `${inputId}-helper`;
 
     return (
       <div className="w-full">
         {label && (
           <label
             htmlFor={inputId}
-            className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-foreground-muted"
           >
             {label}
+            {required && (
+              <span className="ml-1 text-danger" aria-hidden="true">*</span>
+            )}
           </label>
         )}
 
         <input
           ref={ref}
           id={inputId}
+          disabled={disabled}
+          required={required}
           aria-invalid={!!error}
-          aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-              ? `${inputId}-helper`
-              : undefined
-          }
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
+          aria-required={required}
           className={`
             w-full
-            rounded-2xl
+            rounded-xl
             border
-            bg-white
-            dark:bg-slate-950/60
+            bg-background
             px-4
             py-3
             text-sm
-            text-slate-900
-            dark:text-white
+            text-foreground
             outline-none
             transition-all
             duration-200
-            placeholder:text-slate-400
-            dark:placeholder:text-slate-500
-            focus:border-indigo-500/80
-            focus:ring-2
-            focus:ring-indigo-500/20
+            placeholder:text-foreground-subtle
             disabled:cursor-not-allowed
-            disabled:bg-slate-100
-            dark:disabled:bg-slate-900/50
+            disabled:opacity-50
+            focus:ring-2
+            focus:ring-primary/30
+            focus:border-primary
             ${
               error
-                ? 'border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                : 'border-slate-300 hover:border-slate-400 dark:border-slate-800 dark:hover:border-slate-700'
+                ? 'border-danger focus:border-danger focus:ring-danger/30'
+                : 'border-border hover:border-border-strong'
             }
             ${className}
           `}
@@ -84,8 +84,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {helperText && !error && (
           <p
-            id={`${inputId}-helper`}
-            className="mt-1 text-xs text-slate-600 dark:text-gray-400"
+            id={helperId}
+            className="mt-1.5 text-xs text-foreground-subtle"
           >
             {helperText}
           </p>
@@ -93,9 +93,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {error && (
           <p
-            id={`${inputId}-error`}
-            className="mt-1 text-xs text-red-600 dark:text-red-400"
+            id={errorId}
+            className="mt-1.5 text-xs text-danger flex items-center gap-1"
+            role="alert"
           >
+            <svg className="h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
             {error}
           </p>
         )}

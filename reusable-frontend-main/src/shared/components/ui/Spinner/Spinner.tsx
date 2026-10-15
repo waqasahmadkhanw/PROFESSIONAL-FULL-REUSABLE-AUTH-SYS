@@ -2,7 +2,7 @@ import { HTMLAttributes } from "react";
 
 export interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg";
-  color?: "primary" | "white" | "gray";
+  color?: "primary" | "foreground" | "muted";
   fullScreen?: boolean;
 }
 
@@ -13,9 +13,9 @@ const sizeClasses = {
 };
 
 const colorClasses = {
-  primary: "border-blue-600 border-t-transparent",
-  white: "border-white border-t-transparent",
-  gray: "border-gray-500 border-t-transparent",
+  primary: "border-primary border-t-transparent",
+  foreground: "border-foreground border-t-transparent",
+  muted: "border-foreground-muted border-t-transparent",
 };
 
 export function Spinner({
@@ -42,7 +42,7 @@ export function Spinner({
 
   if (fullScreen) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-background/80">
         {spinner}
       </div>
     );

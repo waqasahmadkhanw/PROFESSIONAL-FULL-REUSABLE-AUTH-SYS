@@ -29,25 +29,25 @@ export interface ButtonProps
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    'border border-indigo-400/40 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/35 hover:brightness-110 focus-visible:ring-indigo-400',
+    'bg-primary text-white border border-transparent hover:bg-primary/90 focus-visible:ring-primary/40 active:bg-primary-hover',
 
   secondary:
-    'border border-slate-300 bg-slate-100 text-slate-800 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:border-indigo-400/40 dark:hover:bg-slate-800 dark:hover:text-white hover:shadow-md focus-visible:ring-indigo-400',
+    'bg-surface text-foreground border border-border hover:bg-surface-hover hover:border-border-strong focus-visible:ring-primary/40 active:bg-surface-elevated dark:bg-surface-elevated dark:hover:bg-surface-hover',
 
   outline:
-    'border border-slate-300 bg-transparent text-slate-800 hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-700 dark:border-white/15 dark:text-slate-100 dark:hover:border-indigo-400/60 dark:hover:bg-indigo-500/10 dark:hover:text-white focus-visible:ring-indigo-400',
+    'bg-transparent text-primary border border-primary/30 hover:bg-primary/5 focus-visible:ring-primary/40 active:bg-primary/10',
 
   ghost:
-    'bg-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white focus-visible:ring-indigo-400',
+    'bg-transparent text-foreground hover:bg-surface hover:text-foreground focus-visible:ring-primary/40 active:bg-surface',
 
   danger:
-    'border border-red-500/40 bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 hover:brightness-110 focus-visible:ring-red-400',
+    'bg-danger text-white border border-transparent hover:bg-danger/90 focus-visible:ring-danger/40 active:bg-danger/80',
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-base',
+  sm: 'h-9 px-3.5 text-xs gap-1.5',
+  md: 'h-10 px-4 text-sm gap-2',
+  lg: 'h-11 px-5 text-base gap-2',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -66,35 +66,35 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    const isDisabled = disabled || loading;
+
     return (
       <button
         ref={ref}
         type={type}
-        disabled={disabled || loading}
+        disabled={isDisabled}
+        aria-busy={loading}
         className={`
           inline-flex
           items-center
           justify-center
-          gap-2
-          rounded-xl
           font-medium
+          rounded-xl
           select-none
-          cursor-pointer
           transition-all
           duration-200
           ease-out
           hover:-translate-y-0.5
-          hover:scale-[1.01]
           active:translate-y-0
-          active:scale-[0.98]
+          active:scale-[0.99]
           focus:outline-none
           focus-visible:ring-2
           focus-visible:ring-offset-2
-          focus-visible:ring-offset-white
-          dark:focus-visible:ring-offset-slate-950
+          focus-visible:ring-offset-background
           disabled:cursor-not-allowed
-          disabled:opacity-60
-          disabled:pointer-events-none
+          disabled:opacity-50
+          disabled:hover:translate-y-0
+          disabled:active:scale-100
           ${variantClasses[variant]}
           ${sizeClasses[size]}
           ${className}
@@ -106,16 +106,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             className="h-4 w-4 animate-spin"
             viewBox="0 0 24 24"
             fill="none"
+            aria-hidden="true"
           >
             <circle
               cx="12"
               cy="12"
               r="10"
               stroke="currentColor"
-              strokeWidth="4"
+              strokeWidth="3"
               className="opacity-25"
             />
-
             <path
               className="opacity-75"
               fill="currentColor"
