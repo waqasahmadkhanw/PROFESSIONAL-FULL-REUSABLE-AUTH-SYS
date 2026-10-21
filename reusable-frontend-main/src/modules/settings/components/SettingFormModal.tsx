@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/shared/components/ui";
 import { Select } from "@/shared/components/ui/Select";
 import { Switch } from "@/shared/components/ui/Switch";
@@ -64,16 +64,6 @@ export function SettingFormModal({
     setting?.isSensitive ?? false
   );
   const [isActive, setIsActive] = useState(setting?.isActive ?? true);
-  useEffect(() => {
-    setKey(setting?.key ?? "");
-    setLabel(setting?.label ?? "");
-    setValue(setting?.value !== undefined && setting?.value !== null ? String(setting.value) : "");
-    setGroup(setting?.group ?? "general");
-    setValueType(setting?.valueType ?? "string");
-    setIsPublic(setting?.isPublic ?? false);
-    setIsSensitive(setting?.isSensitive ?? false);
-    setIsActive(setting?.isActive ?? true);
-  }, [setting, open]);
 
   const isKeyLocked = Boolean(setting);
 

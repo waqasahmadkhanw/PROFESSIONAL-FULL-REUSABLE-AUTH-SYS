@@ -10,7 +10,6 @@ import {
   CheckSquare,
   Square,
   X,
-  Lock,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui";
 import { Modal } from "@/shared/components/overlay";
@@ -335,7 +334,7 @@ function RoleFormBody({
             })
           ) : (
             <div className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-              No permissions match "{searchQuery}"
+              No permissions match &quot;{searchQuery}&quot;
             </div>
           )}
         </div>

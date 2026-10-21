@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/shared/components/ui";
 import { Modal } from "@/shared/components/overlay/Modal";
 import { useToast } from "@/shared/components/ui/Toast/useToast";
 import { useAllPermissionsQuery, useRolesQuery } from "@/modules/roles/queries";
 import { useAssignUserPermissionsMutation } from "@/modules/roles/mutations";
-import { useUserPermissionsQuery } from "@/modules/roles/queries/useUserPermissionsQuery";
 import type { AdminUser } from "../types";
 import type { UserRole } from "../types";
 import { useChangeUserRoleMutation } from "../mutations";
@@ -17,17 +16,10 @@ export function UserAccessModal({ user, open, onClose }: { user: AdminUser | nul
   const toast = useToast();
   const { data: registry = [], isLoading: permissionsLoading } = useAllPermissionsQuery();
   const { data: rolesData } = useRolesQuery({ page: 1, limit: 100 });
-  const { data: fetched } = useUserPermissionsQuery(user?._id);
   const assign = useAssignUserPermissionsMutation();
   const changeRole = useChangeUserRoleMutation();
   const [role, setRole] = useState<UserRole>(user?.role ?? "");
-  const [selected, setSelected] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!user) return;
-    setRole(user.role);
-    setSelected(fetched?.permissions ?? user.permissions ?? []);
-  }, [user, fetched, open]);
+  const [selected, setSelected] = useState<string[]>(user?.permissions ?? []);
 
   const roleDefaults = useMemo(
     () => rolesData?.roles.find((item) => item.slug === role || item.name.toLowerCase() === role.toLowerCase())?.permissions ?? [],

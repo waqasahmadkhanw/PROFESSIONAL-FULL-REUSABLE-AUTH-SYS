@@ -73,7 +73,7 @@ export function SettingsPage() {
       }
       setFormOpen(false);
       setEditingSetting(null);
-    } catch (err) {
+    } catch {
       toast.error(
         payload.id ? SETTING_MESSAGES.UPDATE_ERROR : SETTING_MESSAGES.CREATE_ERROR
       );

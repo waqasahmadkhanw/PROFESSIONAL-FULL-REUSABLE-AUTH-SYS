@@ -4,7 +4,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';
 }
 
-interface CardSectionProps extends HTMLAttributes<HTMLDivElement> {}
+type CardSectionProps = HTMLAttributes<HTMLDivElement>;
 
 export function Card({
   variant = 'default',

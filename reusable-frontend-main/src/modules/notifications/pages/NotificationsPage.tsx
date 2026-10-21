@@ -16,7 +16,6 @@ const isRecent = (date: string) => Date.now() - new Date(date).getTime() <= 7 * 
 export function NotificationsPage() {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<AppNotification | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
   const [sendOpen, setSendOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<AppNotification | null>(null);
   const [status, setStatus] = useState<"all" | "unread">("all");
@@ -31,7 +30,7 @@ export function NotificationsPage() {
   const total = data?.total ?? 0;
   const hasFilters = status !== "all";
 
-  const handleView = (notification: AppNotification) => { setSelected(notification); setDetailOpen(true); };
+  const handleView = (notification: AppNotification) => { setSelected(notification); };
   const handleMarkRead = async (id: string) => {
     try { await markAsRead(id); toast.success("Marked as read"); }
     catch { toast.error("Failed to mark as read"); }
@@ -83,7 +82,7 @@ export function NotificationsPage() {
         </section>
       </div>
 
-      <NotificationDetailModal notification={selected} onClose={() => setDetailOpen(false)} />
+      <NotificationDetailModal notification={selected} onClose={() => setSelected(null)} />
       <NotificationSendModal open={sendOpen} onClose={() => setSendOpen(false)} />
       <NotificationDeleteDialog notification={deleteTarget} onClose={() => setDeleteTarget(null)} />
     </main>

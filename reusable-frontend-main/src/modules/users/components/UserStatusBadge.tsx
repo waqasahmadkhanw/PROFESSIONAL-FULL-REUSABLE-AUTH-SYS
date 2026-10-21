@@ -1,5 +1,4 @@
 import { Badge } from "@/shared/components/ui";
-import type { AdminUser } from "../types";
 
 interface UserStatusBadgeProps {
   isActivated: boolean;

@@ -22,12 +22,12 @@ Core frontend modules map to the current backend routes:
 | Frontend | Backend |
 | --- | --- |
 | auth | `/api/user/*` |
-| users | `/api/user-management/*` |
+| users | `/api/users/*` |
 | roles | `/api/roles/*` |
 | notifications | `/api/notifications/*` |
 | media | `/api/media/*` |
 | payments | `/api/payments/*` |
-| dashboard | `/api/dashboard/admin` |
+| dashboard | `/api/dashboard/* or as implemented` |
 | settings | `/api/settings/*` |
 | audit logs | `/api/audit-logs/*` |
 | profile | `/api/profile/*` |

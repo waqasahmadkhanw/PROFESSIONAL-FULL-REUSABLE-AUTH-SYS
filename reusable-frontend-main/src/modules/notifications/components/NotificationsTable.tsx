@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, Eye, Trash2 } from "lucide-react";
-import { Button } from "@/shared/components/ui";
 import { NotificationReadBadge, NotificationTypeBadge } from ".";
 import type { AppNotification } from "../types";
 

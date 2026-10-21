@@ -42,9 +42,7 @@ export function UserFormModal({
   const [role, setRole] = useState<UserRole>(user?.role ?? "");
   const { data: rolesData } = useRolesQuery({ page: 1, limit: 100 });
   const [phone, setPhone] = useState(user?.phone ?? "");
-  const [isActivated, setIsActivated] = useState(
-    user?.isActivated ?? true
-  );
+  const [isActivated] = useState(user?.isActivated ?? true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

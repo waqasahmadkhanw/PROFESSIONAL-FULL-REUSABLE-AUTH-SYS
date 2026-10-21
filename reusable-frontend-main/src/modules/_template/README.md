@@ -7,7 +7,7 @@ Rules:
 - `services/`: domain orchestration and mapping.
 - `queries/` / `mutations/`: React Query server-state hooks.
 - `hooks/`: feature-specific UI/application hooks.
-- `validators/`: Zod schemas for request/form validation.
+- `validation/`: Zod schemas for request/form validation.
 - `components/`: feature UI only.
 - `types/`: TypeScript contracts.
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { usePayments } from "./usePayments";
 import type { Payment } from "../types";
@@ -24,12 +24,7 @@ export function usePaymentManagement() {
     paymentMethod: methodFilter || undefined,
   });
 
-  useEffect(() => {
-    setPage(1);
-    setSelectedIds([]);
-  }, [debouncedSearch, statusFilter, methodFilter]);
-
-  const payments = query.data?.payments ?? [];
+  const payments = useMemo(() => query.data?.payments ?? [], [query.data]);
 
   const handleToggleSelect = useCallback((id: string) => {
     setSelectedIds((previous) =>

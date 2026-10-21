@@ -45,6 +45,7 @@ export const useAuthGuard = ({
       router.replace(forbiddenRedirectTo);
     }
   }, [
+    sessionQuery.error,
     forbiddenRedirectTo,
     isAuthFailure,
     isAuthenticated,

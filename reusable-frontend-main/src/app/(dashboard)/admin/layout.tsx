@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthGuard, useCurrentUserQuery, useLogout } from "@/modules/auth";
 import { hasAnyPermission, hasPermission } from "@/modules/auth/utils/auth.permission";
@@ -16,23 +16,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const { data: currentUser } = useCurrentUserQuery();
   const { logout, isPending: isLoggingOut } = useLogout();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() =>
+    storage.get<boolean>("admin-sidebar-collapsed") === true
+  );
+  const [hydrated] = useState(true);
   const isAdminRole = currentUser?.role === "admin" || Boolean(currentUser?.roles?.includes("admin"));
   // Entry into the admin shell itself: any staff member with at least one
   // admin permission gets in (so they can see the sections the sidebar
   // filters in for them).
   const hasAdminAccess = isAdminRole || hasAnyPermission(currentUser, Object.values(PERMISSIONS));
 
-  useEffect(() => {
-    const saved = storage.get<boolean>("admin-sidebar-collapsed");
-    setIsDesktopCollapsed(saved === true);
-    setHydrated(true);
-  }, []);
 
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";

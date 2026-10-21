@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { useAppDispatch } from "@/shared/store";
 import { useQueryClient } from "@tanstack/react-query";
-import { AUTH_QUERY_KEYS } from "../constants/auth.query-keys";
+
 
 import { useLogoutMutation } from "../mutations";
 import { logout } from "../store";

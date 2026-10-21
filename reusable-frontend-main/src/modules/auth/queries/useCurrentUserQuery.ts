@@ -47,7 +47,7 @@ export const useCurrentUserQuery = () => {
         dispatch(logout());
       }
     }
-  }, [dispatch, query.data, query.error, query.isError, query.isSuccess]);
+  }, [dispatch, queryClient, query.data, query.error, query.isError, query.isSuccess]);
 
   return query;
 };

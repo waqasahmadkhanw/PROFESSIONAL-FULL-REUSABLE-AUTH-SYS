@@ -23,6 +23,9 @@ export const useUnreadCountQuery = () => {
   return useQuery({
     queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT,
     queryFn: () => getUnreadCountApi(),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 

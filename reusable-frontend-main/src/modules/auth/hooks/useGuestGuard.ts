@@ -14,7 +14,6 @@ export const useGuestGuard = ({ redirectTo }: UseGuestGuardOptions = {}) => {
   const router = useRouter();
   const sessionQuery = useCurrentUserQuery();
 
-  const statusCode = (sessionQuery.error as { statusCode?: number } | null)?.statusCode;
   const isResolved = !sessionQuery.isPending && !sessionQuery.isFetching;
   const isAuthenticated = Boolean(sessionQuery.data);
   const role = sessionQuery.data?.role;
@@ -22,7 +21,7 @@ export const useGuestGuard = ({ redirectTo }: UseGuestGuardOptions = {}) => {
   useEffect(() => {
     if (!isResolved || sessionQuery.error || !isAuthenticated || !role) return;
     router.replace(redirectTo ?? getDashboardRedirect(role));
-  }, [isAuthenticated, isResolved, redirectTo, role, router]);
+  }, [sessionQuery.error, isAuthenticated, isResolved, redirectTo, role, router]);
 
   return {
     isGuest: !isAuthenticated,

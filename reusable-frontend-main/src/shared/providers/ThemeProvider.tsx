@@ -17,7 +17,7 @@ interface ThemeProviderProps {
   children: ReactNode;
   attribute?: string;
   defaultTheme?: string;
-  enableSystem?: boolean;
+  _enableSystem?: boolean;
   disableTransitionOnChange?: boolean;
   storageKey?: string;
   themes?: string[];
@@ -44,8 +44,7 @@ function getSystemTheme(): string {
 
 function getStoredTheme(
   storageKey: string,
-  defaultTheme: string,
-  enableSystem: boolean
+  defaultTheme: string
 ): string {
   if (typeof window === "undefined") return defaultTheme;
   try {
@@ -111,24 +110,24 @@ export default function ThemeProvider({
   children,
   attribute = "class",
   defaultTheme = "system",
-  enableSystem = true,
+  _enableSystem = true,
   disableTransitionOnChange = false,
   storageKey = "theme",
   themes = ["light", "dark"],
   forcedTheme,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<string>(() =>
-    getStoredTheme(storageKey, defaultTheme, enableSystem)
+    getStoredTheme(storageKey, defaultTheme)
   );
   const [systemTheme, setSystemTheme] = useState<string | undefined>(() =>
-    enableSystem ? getSystemTheme() : undefined
+    _enableSystem ? getSystemTheme() : undefined
   );
 
   const resolvedTheme = useMemo(() => {
     if (forcedTheme) return forcedTheme;
-    if (theme === "system" && enableSystem) return systemTheme;
+    if (theme === "system" && _enableSystem) return systemTheme;
     return theme;
-  }, [theme, systemTheme, enableSystem, forcedTheme]);
+  }, [theme, systemTheme, _enableSystem, forcedTheme]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -140,7 +139,7 @@ export default function ThemeProvider({
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [enableSystem]);
+  }, [_enableSystem]);
 
   useEffect(() => {
     applyTheme(attribute, resolvedTheme ?? defaultTheme, themes, true, defaultTheme);

@@ -60,11 +60,11 @@ export function MyPaymentsPage() {
               <p className="p-8 text-center text-sm text-slate-500">No payments found.</p>
             )}
 
-            {query.data?.pagination.pages > 1 && (
+            {(query.data?.pagination?.pages ?? 0) > 1 && (
               <div className="flex justify-end border-t p-4 dark:border-slate-800">
                 <Pagination
                   page={page}
-                  totalPages={query.data.pagination.pages}
+                  totalPages={query.data?.pagination?.pages ?? 1}
                   onPageChange={setPage}
                 />
               </div>

@@ -1,6 +1,6 @@
 import apiClient from "@/shared/api/client";
 import { API_ENDPOINTS } from "@/shared/api/endpoints";
-import type { Payment, PaymentListResult } from "../types";
+import type { PaymentListResult } from "../types";
 
 export interface CreatePaymentSessionRequest {
   orderId: string;

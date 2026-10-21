@@ -16,7 +16,6 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       label,
       helperText,
       error,
-      className = '',
       disabled,
       ...props
     },

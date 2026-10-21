@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Plus, ShieldCheck, Shield, Lock, KeyRound, Search, CheckCircle, X, Layers, Sparkles } from "lucide-react";
+import { Plus, ShieldCheck, Shield, Lock, KeyRound, Search, CheckCircle, X } from "lucide-react";
 import { Button } from "@/shared/components/ui";
 import { PageHeader } from "@/shared/components/navigation";
 import { Pagination } from "@/shared/components/navigation";
@@ -389,7 +389,7 @@ export function RolesPage() {
               })
             ) : (
               <p className="py-4 text-xs text-slate-500 dark:text-slate-400">
-                No permissions match "{registrySearch}"
+                No permissions match &quot;{registrySearch}&quot;
               </p>
             )}
           </div>

@@ -4,13 +4,9 @@ import { useEffect, useState } from "react";
 
 export function useOnlineStatus(): boolean {
   const [isOnline, setIsOnline] =
-    useState<boolean>(true);
+    useState<boolean>(navigator.onLine);
 
   useEffect(() => {
-    setIsOnline(
-      navigator.onLine
-    );
-
     const handleOnline = () => {
       setIsOnline(true);
     };

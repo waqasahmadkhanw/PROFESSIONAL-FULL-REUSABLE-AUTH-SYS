@@ -1,7 +1,7 @@
 "use client";
 
 import { useRefundPaymentMutation } from "../mutations";
-import { usePaymentByIdQuery, usePaymentsQuery } from "../queries";
+import { usePaymentsQuery } from "../queries";
 import type { PaymentQueryParams, RefundPayload } from "../types";
 
 /**

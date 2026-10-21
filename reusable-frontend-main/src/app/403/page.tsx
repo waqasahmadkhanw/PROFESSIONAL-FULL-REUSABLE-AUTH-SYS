@@ -7,7 +7,6 @@ import {
   Home,
   LogIn,
   RefreshCw,
-  ArrowLeft,
   Lock,
 } from "lucide-react";
 
