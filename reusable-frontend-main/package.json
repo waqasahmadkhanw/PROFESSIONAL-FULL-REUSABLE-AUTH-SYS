@@ -12,9 +12,7 @@
     "check": "npm run typecheck && npm run lint && npm run architecture-audit && npm run security-audit && npm run backend-alignment-audit && npm run build",
     "architecture-audit": "node scripts/architecture-audit.mjs",
     "security-audit": "node scripts/security-audit.mjs",
-    "backend-alignment-audit": "node scripts/backend-alignment-audit.mjs",
-    "phase12-check": "npm run architecture-audit && npm run security-audit && npm run backend-alignment-audit",
-    "phase13-check": "npm run architecture-audit && npm run security-audit && npm run backend-alignment-audit"
+    "backend-alignment-audit": "node scripts/backend-alignment-audit.mjs"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.20",

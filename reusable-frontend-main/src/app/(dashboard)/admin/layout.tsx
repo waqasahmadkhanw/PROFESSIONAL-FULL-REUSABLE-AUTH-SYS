@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         handleLogout={handleLogout}
         isLoggingOut={isLoggingOut}
       />
-      <div className="flex min-h-screen pt-[72px]">
+      <div className="flex min-h-screen pt-16">
         <Sidebar
           pathname={pathname}
           isSidebarOpen={isSidebarOpen}
@@ -96,11 +96,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           allowAll={isAdminRole}
         />
         <main className="min-w-0 flex-1">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
             {activeItem && (
-              <header className="mb-6 border-b border-slate-200 pb-4 dark:border-slate-800">
-                <h1 className="text-2xl font-semibold">{activeItem.label}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
+              <header className="mb-6 border-b border-slate-200 pb-5 dark:border-slate-800">
+                <h1 className="text-2xl font-semibold tracking-tight">{activeItem.label}</h1>
+                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                   Reusable administration and system management.
                 </p>
               </header>

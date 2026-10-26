@@ -90,19 +90,19 @@ export function Sidebar({
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
   const content = (
-    <div className="flex h-full flex-col bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-50">
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
+    <div className="flex h-full flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+      <nav className="flex-1 overflow-y-auto px-2 py-4">
         {navSections.map((section) => {
           const visibleItems = section.items.filter((item) => !item.permission || allowAll || hasPermission(currentUser, item.permission));
           if (visibleItems.length === 0) return null;
           return (
-          <div key={section.label} className="mb-5">
+          <div key={section.label} className="mb-6">
             {!isDesktopCollapsed && (
-              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
+              <p className="mb-2 px-2 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {section.label}
               </p>
             )}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {visibleItems.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -112,11 +112,11 @@ export function Sidebar({
                     title={isDesktopCollapsed ? item.label : undefined}
                     onClick={() => setIsSidebarOpen(false)}
                     className={cn(
-                      "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
+                      "group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors",
                       isDesktopCollapsed && "justify-center px-0",
                       active
-                        ? "bg-indigo-600 text-white shadow-sm"
-                        : "text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white",
+                        ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white",
                     )}
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
@@ -136,9 +136,9 @@ export function Sidebar({
     <>
       <aside
         className={cn(
-          "sticky top-[72px] z-30 hidden h-[calc(100vh-72px)] shrink-0 border-r border-slate-200 bg-slate-50 lg:flex dark:border-slate-800 dark:bg-slate-900",
+          "sticky top-16 z-30 hidden h-[calc(100vh-4rem)] shrink-0 border-r border-slate-200 bg-white lg:flex dark:border-slate-800 dark:bg-slate-950",
           hasHydratedCollapsePref && "transition-[width] duration-200",
-          isDesktopCollapsed ? "w-20" : "w-64",
+          isDesktopCollapsed ? "w-16" : "w-64",
         )}
       >
         <div className="flex w-full flex-col">
@@ -146,7 +146,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={toggleDesktopCollapsed}
-            className="m-3 inline-flex h-9 items-center justify-center rounded-lg border text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
+            className="m-2 inline-flex h-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
             aria-label={isDesktopCollapsed ? "Expand navigation" : "Collapse navigation"}
           >
             {isDesktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
@@ -162,7 +162,7 @@ export function Sidebar({
             className="absolute inset-0 bg-black/40"
             onClick={() => setIsSidebarOpen(false)}
           />
-          <aside className="relative z-10 h-full w-72 border-r bg-white dark:border-slate-800 dark:bg-slate-900">
+          <aside className="relative z-10 h-full w-72 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
             {content}
           </aside>
         </div>

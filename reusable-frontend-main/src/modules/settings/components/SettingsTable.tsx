@@ -51,7 +51,7 @@ export function SettingsTable({
                 </div>
               </td>
               <td className="px-4 py-3 text-slate-700">{setting.label || "—"}</td>
-              <td className="max-w-[200px] truncate px-4 py-3 text-slate-700">
+              <td className="max-w-50 truncate px-4 py-3 text-slate-700">
                 {setting.isSensitive ? (
                   <span className="text-slate-400">••••••••</span>
                 ) : (
