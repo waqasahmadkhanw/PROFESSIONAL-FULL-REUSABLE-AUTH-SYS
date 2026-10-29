@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useMemo, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthGuard, useCurrentUserQuery, useLogout } from "@/modules/auth";
 import { hasAnyPermission, hasPermission } from "@/modules/auth/utils/auth.permission";
@@ -21,10 +21,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   );
   const [hydrated] = useState(true);
   const isAdminRole = currentUser?.role === "admin" || Boolean(currentUser?.roles?.includes("admin"));
-  // Entry into the admin shell itself: any staff member with at least one
-  // admin permission gets in (so they can see the sections the sidebar
-  // filters in for them).
-  const hasAdminAccess = isAdminRole || hasAnyPermission(currentUser, Object.values(PERMISSIONS));
+  const hasAdminAccess = useMemo(() => isAdminRole || hasAnyPermission(currentUser, Object.values(PERMISSIONS)), [isAdminRole, currentUser]);
 
 
 
@@ -33,21 +30,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     return () => { document.body.style.overflow = ""; };
   }, [isSidebarOpen]);
 
-  const activeItem =
+  const activeItem = useMemo(() =>
     navSections.flatMap((section) => section.items)
       .sort((a, b) => b.href.length - a.href.length)
-      .find((item) => item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href));
+      .find((item) => item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)),
+    [pathname]
+  );
 
-  // Route-level check: "has some admin permission" is only enough to get
-  // into the shell — the page being viewed must match the specific
-  // permission the sidebar already uses to decide whether to show its
-  // link. Without this, a staff member with e.g. only MANAGE_MEDIA could
-  // type /admin/users into the address bar and see it anyway, since the
-  // sidebar only hides the *link*, it doesn't block the *route*.
-  // Unmapped routes (like /admin itself) fall back to "any admin access".
-  const isRouteAuthorized =
+  const isRouteAuthorized = useMemo(() =>
     isAdminRole ||
-    (activeItem?.permission ? hasPermission(currentUser, activeItem.permission) : hasAdminAccess);
+    (activeItem?.permission ? hasPermission(currentUser, activeItem.permission) : hasAdminAccess),
+    [isAdminRole, activeItem, currentUser, hasAdminAccess]
+  );
 
   const toggleDesktopCollapsed = () => {
     setIsDesktopCollapsed((current) => {

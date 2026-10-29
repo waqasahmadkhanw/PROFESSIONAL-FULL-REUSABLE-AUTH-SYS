@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -86,8 +86,10 @@ export function Sidebar({
   currentUser,
   allowAll = false,
 }: SidebarProps) {
-  const isActive = (href: string) =>
-    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+  const isActive = useCallback((href: string) =>
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href), [pathname]);
+
+  const handleLinkClick = useCallback(() => setIsSidebarOpen(false), [setIsSidebarOpen]);
 
   const content = (
     <div className="flex h-full flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50">
@@ -110,7 +112,8 @@ export function Sidebar({
                     key={item.href}
                     href={item.href}
                     title={isDesktopCollapsed ? item.label : undefined}
-                    onClick={() => setIsSidebarOpen(false)}
+                    prefetch={true}
+                    onClick={handleLinkClick}
                     className={cn(
                       "group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors",
                       isDesktopCollapsed && "justify-center px-0",

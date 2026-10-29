@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Bell, LogOut, Menu, Moon, Settings, Sun, User, X } from "lucide-react";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useUnreadCountQuery } from "@/modules/notifications";
+import { Avatar } from "@/shared/components/ui";
 
 interface NavbarProps {
   isSidebarOpen: boolean;
@@ -69,9 +70,7 @@ export function Navbar({
             onClick={() => setProfileOpen((open) => !open)}
             className="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-              <User className="h-4 w-4" />
-            </div>
+            <Avatar src={currentUser?.avatar ?? undefined} name={currentUser?.name} size="sm" className="h-7 w-7" />
             <span className="hidden max-w-28 truncate sm:block">{currentUser?.name ?? "Account"}</span>
           </button>
           {profileOpen && (

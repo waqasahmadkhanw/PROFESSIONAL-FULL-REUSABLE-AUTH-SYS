@@ -20,6 +20,28 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  // Optimize package imports for faster builds
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-radio-group",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+      "@tanstack/react-query",
+      "@reduxjs/toolkit",
+      "react-redux",
+      "zod",
+      "react-hook-form",
+    ],
+  },
+  // Improve dev performance
+  devIndicators: {
+    position: "bottom-right",
+  },
   images: {
     remotePatterns: [
       {

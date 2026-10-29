@@ -38,6 +38,8 @@ export const createQueryClient = () =>
 
         // UX
         networkMode: "online",
+        // Faster navigation
+        structuralSharing: true,
       },
 
       mutations: {
