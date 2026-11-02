@@ -6,6 +6,7 @@ import { useAuthGuard, useCurrentUserQuery, useLogout } from "@/modules/auth";
 import { UserNavbar } from "./_components/UserNavbar";
 import { UserSidebar, userNavSections } from "./_components/UserSidebar";
 import { storage } from "@/shared/lib/storage";
+import { PublicFooter } from "@/shared/components/layout/PublicFooter";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -27,7 +28,13 @@ export default function DashboardLayout({
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() =>
     storage.get<boolean>("user-sidebar-collapsed") === true
   );
-  const [hydrated] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const isAdminRoute = useMemo(() => Boolean(pathname?.startsWith("/admin")), [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
@@ -61,14 +68,20 @@ export default function DashboardLayout({
   }
   if (!isAuthorized) return null;
 
+  if (isAdminRoute) {
+    return <>{children}</>;
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 text-slate-900 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50">
       <UserNavbar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
         currentUser={currentUser}
         handleLogout={handleLogout}
         isLoggingOut={isLoggingOut}
+        isDesktopCollapsed={isDesktopCollapsed}
+        toggleDesktopCollapsed={toggleDesktopCollapsed}
       />
       <div className="flex min-h-screen pt-16">
         <UserSidebar
@@ -80,19 +93,22 @@ export default function DashboardLayout({
           hasHydratedCollapsePref={hydrated}
           currentUser={currentUser}
         />
-        <main className="min-w-0 flex-1">
-          <div className="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
-            {activeItem && (
-              <header className="mb-6 border-b border-slate-200 pb-5 dark:border-slate-800">
-                <h1 className="text-2xl font-semibold tracking-tight">{activeItem.label}</h1>
-                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                  Manage your account and activities.
-                </p>
-              </header>
-            )}
-            {children}
-          </div>
-        </main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <main className="min-w-0 flex-1">
+            <div className="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
+              {activeItem && (
+                <header className="mb-6 border-b border-slate-200 pb-5 dark:border-slate-800">
+                  <h1 className="text-2xl font-semibold tracking-tight">{activeItem.label}</h1>
+                  <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+                    Manage your account and activities.
+                  </p>
+                </header>
+              )}
+              {children}
+            </div>
+          </main>
+          <PublicFooter />
+        </div>
       </div>
     </div>
   );

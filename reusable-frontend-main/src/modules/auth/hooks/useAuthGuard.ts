@@ -24,7 +24,7 @@ export const useAuthGuard = ({
 
   const statusCode = (sessionQuery.error as { statusCode?: number } | null)?.statusCode;
   const isAuthFailure = statusCode === 401 || statusCode === 403;
-  const isSessionResolved = !sessionQuery.isPending && !sessionQuery.isFetching;
+  const isSessionResolved = !sessionQuery.isPending;
   const isAuthenticated = Boolean(sessionQuery.data);
   const userRole = sessionQuery.data?.role;
   const requiresRole = Boolean(roles?.length);
