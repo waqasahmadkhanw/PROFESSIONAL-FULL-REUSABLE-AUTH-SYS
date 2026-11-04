@@ -124,36 +124,22 @@ export function UserSidebar({
     <>
       <aside
         className={cn(
-          "sticky top-16 z-30 hidden h-[calc(100vh-4rem)] shrink-0 border-r border-slate-200 bg-white lg:flex dark:border-slate-800 dark:bg-slate-950",
-          hasHydratedCollapsePref && "transition-[width] duration-200",
-          isDesktopCollapsed ? "w-0 -translate-x-full border-r-0 overflow-hidden" : "w-64",
+          "fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] shrink-0 border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 dark:border-slate-800 dark:bg-slate-950",
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex w-full flex-col">
+        <div className="flex h-full w-72 flex-col">
           {content}
-          <button
-            type="button"
-            onClick={toggleDesktopCollapsed}
-            className="m-2 inline-flex h-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
-            aria-label={isDesktopCollapsed ? "Expand navigation" : "Collapse navigation"}
-          >
-            {isDesktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </button>
         </div>
       </aside>
 
       {isSidebarOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            type="button"
-            aria-label="Close navigation"
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-          <aside className="relative z-10 h-full w-72 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-            {content}
-          </aside>
-        </div>
+        <button
+          type="button"
+          aria-label="Close navigation"
+          className="fixed inset-0 top-16 z-40 bg-black/40 backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
+        />
       )}
     </>
   );

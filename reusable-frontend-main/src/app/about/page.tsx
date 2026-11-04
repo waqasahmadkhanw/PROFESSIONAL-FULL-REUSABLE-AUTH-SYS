@@ -37,10 +37,10 @@ export default function AboutPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="mb-8 space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{aboutTitle}</h1>
-      </header>
+  <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header className="mb-8 space-y-2">
+      <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">{aboutTitle}</h1>
+    </header>
       <section className="space-y-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="prose prose-slate max-w-none dark:prose-invert">

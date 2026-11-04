@@ -63,10 +63,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (authGuard.isAuthorized && currentUser && !isRouteAuthorized) {
+    if (authGuard.isAuthorized && currentUser && !isRouteAuthorized && pathname.startsWith("/admin")) {
       router.replace("/403");
     }
-  }, [authGuard.isAuthorized, currentUser, isRouteAuthorized, router]);
+  }, [authGuard.isAuthorized, currentUser, isRouteAuthorized, router, pathname]);
 
   if (authGuard.isLoading) {
     return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Checking session…</div>;

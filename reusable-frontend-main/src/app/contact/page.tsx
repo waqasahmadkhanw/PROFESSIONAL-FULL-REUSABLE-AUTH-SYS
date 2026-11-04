@@ -69,8 +69,8 @@ export default function ContactPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-10 space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{contactTitle}</h1>
-        <p className="text-slate-500 dark:text-slate-400">{contactDescription}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">{contactTitle}</h1>
+        <p className="mx-auto max-w-2xl text-base text-slate-500 dark:text-slate-400">{contactDescription}</p>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">

@@ -31,11 +31,7 @@ export function Navbar({
   const isDark = resolvedTheme === "dark";
 
   const handleToggleSidebar = () => {
-    if (toggleDesktopCollapsed) {
-      toggleDesktopCollapsed();
-    } else {
-      setIsSidebarOpen((open) => !open);
-    }
+    setIsSidebarOpen((open) => !open);
   };
 
   return (
@@ -43,19 +39,11 @@ export function Navbar({
       <div className="flex items-center gap-2">
         <button
           type="button"
-          aria-label={isDesktopCollapsed ? "Expand navigation" : "Collapse navigation"}
+          aria-label={isSidebarOpen ? "Close navigation" : "Open navigation"}
           onClick={handleToggleSidebar}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
         >
-          {isDesktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-        </button>
-        <button
-          type="button"
-          aria-label="Toggle mobile navigation"
-          onClick={() => setIsSidebarOpen((open) => !open)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 lg:hidden"
-        >
-          {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          {isSidebarOpen ? <X className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
         </button>
         <Link href="/admin" className="text-sm font-semibold tracking-tight">MERN Admin</Link>
       </div>
