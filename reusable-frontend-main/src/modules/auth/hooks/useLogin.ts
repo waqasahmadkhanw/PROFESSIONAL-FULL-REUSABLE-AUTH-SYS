@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AUTH_QUERY_KEYS } from "../constants/auth.query-keys";
 
 import { useLoginMutation } from "../mutations";
-import { loginSuccess } from "../store";
+import { loginSuccess, loginFailure } from "../store";
 import type { LoginRequest, LoginResponse } from "../types";
 import { emitLocalAuthSync, publishAuthSync } from "../utils/auth.sync";
 
@@ -29,23 +29,32 @@ export const useLogin = () => {
 
   const login = useCallback(
     async (payload: LoginRequest) => {
-      const response: LoginResponse = await mutation.mutateAsync(payload);
+      try {
+        const response: LoginResponse = await mutation.mutateAsync(payload);
 
-      const { user } = response;
+        const { user } = response;
 
-      queryClient.setQueryData(AUTH_QUERY_KEYS.CURRENT_USER, user);
+        queryClient.setQueryData(AUTH_QUERY_KEYS.CURRENT_USER, user);
 
-      dispatch(
-        loginSuccess({
-          userId: user.id,
-          roles: user.roles ?? (user.role ? [user.role] : []),
-          permissions: user.permissions ?? [],
-        })
-      );
+        dispatch(
+          loginSuccess({
+            userId: user.id,
+            roles: user.roles ?? (user.role ? [user.role] : []),
+            permissions: user.permissions ?? [],
+          })
+        );
 
-      emitLocalAuthSync("login");
-      publishAuthSync("login");
-      return response;
+        emitLocalAuthSync("login");
+        publishAuthSync("login");
+        return response;
+      } catch (err) {
+        dispatch(
+          loginFailure(
+            (err as Error)?.message ?? "Something went wrong. Please try again.",
+          ),
+        );
+        throw err;
+      }
     },
     [dispatch, mutation, queryClient]
   );

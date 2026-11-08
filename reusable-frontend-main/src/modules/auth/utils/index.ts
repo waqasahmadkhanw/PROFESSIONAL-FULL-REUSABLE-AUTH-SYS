@@ -27,6 +27,7 @@ export {
   getLoginRedirect,
   getSafeCallbackUrl,
   getDashboardRedirect,
+  getDashboardRoute,
   getLogoutRedirect,
   getRegisterRedirect,
   getResetPasswordRedirect,
@@ -34,6 +35,9 @@ export {
   getUnauthenticatedRedirect,
 } from "./auth.redirect";
 export type { RedirectOptions, RedirectOptions as AuthRedirectOptions } from "./auth.redirect";
+
+// Export DASHBOARD_ROUTES
+export { DASHBOARD_ROUTES } from "./auth.redirect";
 
 // Re-export UserRole from auth.redirect only (avoids conflict with auth.permission)
 export type { UserRole } from "./auth.redirect";

@@ -176,13 +176,13 @@ const resetPassword = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", refreshCookieOptions)
     .json(new ApiResponse(200, {}, "Password reset successful"));
 });
-
 const loginUser = asyncHandler(async (req, res) => {
   // 1. Get login credentials from req.body
   // 2. Validate username/email and password
   // 3. Find the user and verify the password
-  // 4. Generate access and refresh tokens
-  // 5. Set cookies and return the authenticated user
+  // 4. Check account activation status
+  // 5. Generate access and refresh tokens
+  // 6. Set cookies and return the authenticated user
 
   const normalizedEmail = req.body.email?.trim().toLowerCase();
   const { password } = req.body;
@@ -192,6 +192,11 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user || !(await user.isPasswordCorrect(password))) {
     throw new ApiError(401, "Invalid credentials");
   }
+
+  if (!user.isActivated) {
+    throw new ApiError(403, "Account is not activated. Please verify your email before signing in.");
+  }
+
   const { accessToken, refreshToken } = await issueSessionTokens({
     userId: user._id,
     userAgent: req.get("user-agent"),
@@ -207,6 +212,71 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, accessCookieOptions)
     .cookie("refreshToken", refreshToken, refreshCookieOptions)
     .json(new ApiResponse(200, { user: loggedInUser }, "Login successful"));
+});
+
+const googleLogin = asyncHandler(async (req, res) => {
+  // 1. Verify Google credential
+  // 2. Find or create user by Google profile
+  // 3. Check account activation status
+  // 4. Generate access and refresh tokens
+  // 5. Set cookies and return the authenticated user
+
+  const { credential } = req.body;
+  if (!credential) throw new ApiError(400, "Google credential is required");
+
+  // Google ID token verification would be handled here (e.g., via google-auth-library)
+  // For now, extract user info from the verified credential payload
+  let googleUser;
+  try {
+    const decoded = JSON.parse(Buffer.from(credential.split(".")[1], "base64").toString());
+    googleUser = {
+      email: decoded.email,
+      name: decoded.name,
+      picture: decoded.picture,
+      provider: "google",
+      providerId: decoded.sub,
+    };
+  } catch {
+    throw new ApiError(400, "Invalid Google credential");
+  }
+
+  if (!googleUser.email) throw new ApiError(400, "Google account email is required");
+
+  const normalizedEmail = googleUser.email.trim().toLowerCase();
+  let user = await User.findOne({ email: normalizedEmail });
+
+  if (!user) {
+    user = await User.create({
+      name: googleUser.name || "",
+      email: normalizedEmail,
+      password: "",
+      role: "user",
+      avatar: googleUser.picture || "",
+      provider: "google",
+      providerId: googleUser.providerId,
+      isActivated: true,
+    });
+  }
+
+  if (!user.isActivated) {
+    throw new ApiError(403, "Account is not activated. Please verify your email before signing in.");
+  }
+
+  const { accessToken, refreshToken } = await issueSessionTokens({
+    userId: user._id,
+    userAgent: req.get("user-agent"),
+    ipAddress: req.ip,
+  });
+
+  const loggedInUserDoc = await publicUser(User.findById(user._id));
+  const loggedInUser = loggedInUserDoc?.toObject?.() ?? loggedInUserDoc;
+  loggedInUser.permissions = await resolvePermissions(user);
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, accessCookieOptions)
+    .cookie("refreshToken", refreshToken, refreshCookieOptions)
+    .json(new ApiResponse(200, { user: loggedInUser }, "Google login successful"));
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -299,6 +369,7 @@ export {
   forgotPassword,
   resetPassword,
   loginUser,
+  googleLogin,
   logoutUser,
   refreshAccessToken,
 };

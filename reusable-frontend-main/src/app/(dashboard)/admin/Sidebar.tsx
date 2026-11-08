@@ -30,6 +30,7 @@ import type { AuthUser } from "@/modules/auth/types";
 export interface NavItem {
   href: string;
   label: string;
+  description?: string;
   icon: React.ElementType;
   permission?: string;
 }
@@ -40,40 +41,40 @@ export interface NavSection {
 }
 
 export const navSections: NavSection[] = [
-  { label: "Overview", items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard }] },
+  { label: "Overview", items: [{ href: "/admin", label: "Dashboard", description: "View key metrics and recent activity", icon: LayoutDashboard }] },
   {
     label: "Identity",
     items: [
-      { href: "/admin/users", label: "Users", icon: Users, permission: PERMISSIONS.READ_USERS },
-      { href: "/admin/roles", label: "Roles & Permissions", icon: Shield, permission: PERMISSIONS.MANAGE_ROLES },
+      { href: "/admin/users", label: "Users", description: "Manage user accounts and profiles", icon: Users, permission: PERMISSIONS.READ_USERS },
+      { href: "/admin/roles", label: "Roles & Permissions", description: "Configure access control and roles", icon: Shield, permission: PERMISSIONS.MANAGE_ROLES },
     ],
   },
   {
     label: "Content & Commerce",
     items: [
-      { href: "/admin/announcements", label: "Announcements", icon: Megaphone, permission: PERMISSIONS.MANAGE_ANNOUNCEMENTS },
-      { href: "/admin/events", label: "Events", icon: CalendarDays, permission: PERMISSIONS.MANAGE_EVENTS },
-      { href: "/admin/coupons", label: "Coupons", icon: TicketPercent, permission: PERMISSIONS.MANAGE_COUPONS },
-      { href: "/admin/orders", label: "Orders", icon: ShoppingBag, permission: PERMISSIONS.MANAGE_PAYMENTS },
+      { href: "/admin/announcements", label: "Announcements", description: "Publish site-wide announcements", icon: Megaphone, permission: PERMISSIONS.MANAGE_ANNOUNCEMENTS },
+      { href: "/admin/events", label: "Events", description: "Manage upcoming and past events", icon: CalendarDays, permission: PERMISSIONS.MANAGE_EVENTS },
+      { href: "/admin/coupons", label: "Coupons", description: "Create and track discount codes", icon: TicketPercent, permission: PERMISSIONS.MANAGE_COUPONS },
+      { href: "/admin/orders", label: "Orders", description: "View and manage customer orders", icon: ShoppingBag, permission: PERMISSIONS.MANAGE_PAYMENTS },
     ],
   },
   {
     label: "System",
     items: [
-      { href: "/admin/notifications", label: "Notifications", icon: Bell, permission: PERMISSIONS.MANAGE_NOTIFICATIONS },
-      { href: "/admin/media", label: "Media", icon: FileImage, permission: PERMISSIONS.MANAGE_MEDIA },
-      { href: "/admin/payments", label: "Payments", icon: CreditCard, permission: PERMISSIONS.MANAGE_PAYMENTS },
-      { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText, permission: PERMISSIONS.VIEW_ACTIVITY_LOGS },
-      { href: "/admin/settings", label: "Settings", icon: Settings, permission: PERMISSIONS.MANAGE_SETTINGS },
+      { href: "/admin/notifications", label: "Notifications", description: "Manage system notifications", icon: Bell, permission: PERMISSIONS.MANAGE_NOTIFICATIONS },
+      { href: "/admin/media", label: "Media", description: "Upload and organize media files", icon: FileImage, permission: PERMISSIONS.MANAGE_MEDIA },
+      { href: "/admin/payments", label: "Payments", description: "Process and track payments", icon: CreditCard, permission: PERMISSIONS.MANAGE_PAYMENTS },
+      { href: "/admin/audit-logs", label: "Audit Logs", description: "Review system activity logs", icon: ScrollText, permission: PERMISSIONS.VIEW_ACTIVITY_LOGS },
+      { href: "/admin/settings", label: "Settings", description: "Configure application settings", icon: Settings, permission: PERMISSIONS.MANAGE_SETTINGS },
     ],
   },
   {
     label: "Pages",
     items: [
-      { href: "/about", label: "About Us", icon: Info },
-      { href: "/contact", label: "Contact Us", icon: Mail },
-      { href: "/privacy", label: "Privacy Policy", icon: ShieldCheck },
-      { href: "/terms", label: "Terms of Service", icon: FileText },
+      { href: "/about", label: "About Us", description: "Company information page", icon: Info },
+      { href: "/contact", label: "Contact Us", description: "Contact form page", icon: Mail },
+      { href: "/privacy", label: "Privacy Policy", description: "Privacy policy page", icon: ShieldCheck },
+      { href: "/terms", label: "Terms of Service", description: "Terms of service page", icon: FileText },
     ],
   },
 ];
@@ -143,7 +144,14 @@ export function Sidebar({
                     )}
                   >
                     <item.icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-slate-900 dark:text-white" : "text-slate-500 group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-white")} />
-                    {!isDesktopCollapsed && <span>{item.label}</span>}
+                    {!isDesktopCollapsed && (
+                      <div className="flex flex-col">
+                        <span>{item.label}</span>
+                        {item.description && (
+                          <span className="text-xs text-slate-500 dark:text-slate-400">{item.description}</span>
+                        )}
+                      </div>
+                    )}
                   </Link>
                 );
               })}

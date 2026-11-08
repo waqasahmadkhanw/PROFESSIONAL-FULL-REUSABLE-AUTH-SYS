@@ -34,34 +34,42 @@ export default function LoginForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5"
+      className="space-y-6"
       noValidate
     >
-      <Input
-        label="Email"
-        type="email"
-        placeholder="Enter your email"
-        error={errors.email?.message}
-        {...register("email", {
-          required: "Email is required",
-        })}
-      />
+      <div className="space-y-2">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="Enter your email"
+          error={errors.email?.message}
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Invalid email address",
+            },
+          })}
+        />
+      </div>
 
-      <PasswordField
-        label="Password"
-        placeholder="Enter your password"
-        error={errors.password?.message}
-        {...register("password", {
-          required: "Password is required",
-          minLength: { value: 6, message: "Password must be at least 6 characters" },
-          maxLength: { value: 100, message: "Password cannot exceed 100 characters" },
-        })}
-      />
+      <div className="space-y-2">
+        <PasswordField
+          label="Password"
+          placeholder="Enter your password"
+          error={errors.password?.message}
+          {...register("password", {
+            required: "Password is required",
+            minLength: { value: 6, message: "Password must be at least 6 characters" },
+            maxLength: { value: 100, message: "Password cannot exceed 100 characters" },
+          })}
+        />
+      </div>
 
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
         <Link
           href="/forgot-password"
-          className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+          className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
         >
           Forgot password?
         </Link>
@@ -71,6 +79,7 @@ export default function LoginForm({
         type="submit"
         className="w-full"
         loading={isLoading}
+        disabled={isLoading}
       >
         Sign In
       </Button>

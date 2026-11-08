@@ -8,12 +8,24 @@ import type {
   CurrentUserResponse,
   DeleteAccountResponse,
   ForgotPasswordResponse,
+  GoogleLoginResponse,
   LoginResponse,
   LogoutResponse,
   RefreshTokenResponse,
   RegisterResponse,
   ResetPasswordResponse,
   UpdateProfileResponse,
+  VerifyEmailResponse,
+  ResendVerifyEmailResponse,
+  LinkGoogleResponse,
+  UnlinkGoogleResponse,
+  ActiveSessionsResponse,
+  RevokeSessionResponse,
+  RevokeAllExceptCurrentResponse,
+  RestoreAccountResponse,
+  ChangeEmailResponse,
+  VerifyEmailChangeResponse,
+  DeactivateAccountResponse,
 } from "../types";
 
 export const loginApi = (data: { email: string; password: string }) =>
@@ -53,3 +65,39 @@ export const uploadAvatarApi = async ({ avatar }: { avatar: File }) => {
 
 export const deleteAccountApi = () =>
   apiClient.delete<DeleteAccountResponse>(API_ENDPOINTS.PROFILE.DELETE);
+
+export const verifyEmailApi = (data: { token: string }) =>
+  apiClient.post<VerifyEmailResponse>(API_ENDPOINTS.AUTH.VERIFY_EMAIL, data);
+
+export const resendVerifyEmailApi = (data: { email: string }) =>
+  apiClient.post<ResendVerifyEmailResponse>(API_ENDPOINTS.AUTH.RESEND_VERIFY_EMAIL, data);
+
+export const googleLoginApi = (data: { credential: string }) =>
+  apiClient.post<GoogleLoginResponse>(API_ENDPOINTS.AUTH.GOOGLE_LOGIN, data);
+
+export const linkGoogleApi = (data: { credential: string }) =>
+  apiClient.post<LinkGoogleResponse>(API_ENDPOINTS.AUTH.LINK_GOOGLE, data);
+
+export const unlinkGoogleApi = (data?: { password?: string }) =>
+  apiClient.post<UnlinkGoogleResponse>(API_ENDPOINTS.AUTH.UNLINK_GOOGLE, data ?? {});
+
+export const activeSessionsApi = () =>
+  apiClient.get<ActiveSessionsResponse>(API_ENDPOINTS.AUTH.ACTIVE_SESSIONS);
+
+export const revokeSessionApi = (data: { sessionId: string }) =>
+  apiClient.delete<RevokeSessionResponse>(API_ENDPOINTS.AUTH.REVOKE_SESSION(data.sessionId));
+
+export const revokeAllExceptCurrentApi = (data?: { password?: string }) =>
+  apiClient.post<RevokeAllExceptCurrentResponse>(API_ENDPOINTS.AUTH.REVOKE_ALL_EXCEPT_CURRENT, data ?? {});
+
+export const restoreAccountApi = (data: { token: string }) =>
+  apiClient.post<RestoreAccountResponse>(API_ENDPOINTS.AUTH.RESTORE_ACCOUNT, data);
+
+export const changeEmailApi = (data: { newEmail: string; password: string }) =>
+  apiClient.post<ChangeEmailResponse>(API_ENDPOINTS.AUTH.CHANGE_EMAIL, data);
+
+export const verifyEmailChangeApi = (data: { token: string }) =>
+  apiClient.post<VerifyEmailChangeResponse>(API_ENDPOINTS.AUTH.VERIFY_EMAIL_CHANGE(data.token), data);
+
+export const deactivateAccountApi = (data: { password: string }) =>
+  apiClient.post<DeactivateAccountResponse>(API_ENDPOINTS.AUTH.DEACTIVATE_ACCOUNT, data);

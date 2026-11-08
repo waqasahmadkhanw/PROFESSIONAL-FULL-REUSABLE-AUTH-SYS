@@ -7,6 +7,7 @@ import {
 import {
   registerUser,
   loginUser,
+  googleLogin,
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
@@ -35,6 +36,7 @@ router.post(
   registerUser,
 );
 router.post("/login", authRateLimiter, validate(loginRules), loginUser);
+router.post("/auth/google", authRateLimiter, googleLogin);
 router.post("/refresh-token", authRateLimiter, refreshAccessToken);
 router.get("/me", authUser, getCurrentUser);
 router.patch("/password", authUser, validate(changePasswordRules), changeCurrentPassword);

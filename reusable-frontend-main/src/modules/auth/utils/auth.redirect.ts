@@ -35,3 +35,17 @@ export const getResetPasswordRedirect = () => "/login";
 export const getUnauthorizedRedirect = () => "/403";
 export const getUnauthenticatedRedirect = (callbackUrl?: string) =>
   callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
+
+/** Role-to-dashboard route mapping for post-login redirection. */
+export const DASHBOARD_ROUTES: Record<string, string> = {
+  admin: "/dashboard/admin",
+  user: "/dashboard",
+  teacher: "/dashboard/teacher",
+  instructor: "/dashboard/instructor",
+};
+
+/** Resolves the dashboard path for a given role, falling back to /dashboard. */
+export const getDashboardRoute = (role?: UserRole): string => {
+  if (!role) return "/dashboard";
+  return DASHBOARD_ROUTES[role] ?? "/dashboard";
+};

@@ -17,8 +17,9 @@ function isAuthEndpoint(url: string): boolean {
 
     return (
       Object.values(API_ENDPOINTS.AUTH).some(
-        (value) => typeof value === "string" && relativePath === value,
-      ) || relativePath.startsWith("/user/reset-password/")
+        (value) =>
+          typeof value === "string" && (relativePath === value || relativePath.startsWith(value.replace(/\/.*/, "/"))),
+      ) || relativePath.startsWith("/user/reset-password/") || relativePath.startsWith("/auth/google")
     );
   } catch {
     return false;
