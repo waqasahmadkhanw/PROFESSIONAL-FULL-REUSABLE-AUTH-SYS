@@ -5,7 +5,6 @@ export const newLoginAlertTemplate = ({
   location,
   time,
   appName = process.env.APP_NAME || "My App",
-  supportEmail = "support@example.com",
 } = {}) => {
   return `
     <!DOCTYPE html>

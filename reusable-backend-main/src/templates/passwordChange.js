@@ -1,8 +1,11 @@
 export const passwordChangeTemplate = ({
   name = "there",
   appName = process.env.APP_NAME || "My App",
-  supportEmail = "support@example.com",
+  supportEmail = process.env.SUPPORT_EMAIL || process.env.SMTP_EMAIL || "support@example.com",
+  changedAt = new Date().toISOString(),
 } = {}) => {
+  const safeName = String(name || "there").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const safeTime = String(changedAt).replace(/</g, "&lt;").replace(/>/g, "&gt;");
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -23,11 +26,14 @@ export const passwordChangeTemplate = ({
               </tr>
               <tr>
                 <td style="padding: 32px 40px; color: #374151; font-size: 15px; line-height: 1.6;">
-                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #111827;">Password Changed</h1>
-                  <p style="margin: 0 0 16px 0;">Hi ${name},</p>
-                  <p style="margin: 0 0 16px 0;">Your password has been successfully changed. If you did not make this change, please contact support immediately.</p>
-                  <p style="margin: 0;">Contact us at <a href="mailto:${supportEmail}" style="color: #4F46E5; text-decoration: underline;">${supportEmail}</a>.</p>
-                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
+                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #111827;">Password changed</h1>
+                  <p style="margin: 0 0 16px 0;">Hi ${safeName},</p>
+                  <p style="margin: 0 0 16px 0;">Your ${appName} account password was changed successfully.</p>
+                  <p style="margin: 0 0 16px 0; font-size: 14px; color: #4B5563;"><strong>Time:</strong> ${safeTime}</p>
+                  <p style="margin: 0 0 16px 0;">For your security, active sessions may have been signed out. If you made this change, no further action is needed.</p>
+                  <p style="margin: 0 0 16px 0;"><strong>If you did not change your password</strong>, reset your password immediately and contact support at <a href="mailto:${supportEmail}" style="color: #4F46E5; text-decoration: underline;">${supportEmail}</a>.</p>
+                  <p style="margin: 20px 0 0 0; font-size: 13px; color: #6B7280;">This is a security notification. We never include your password in emails.</p>
+                  <p style="margin: 8px 0 0 0; font-size: 13px; color: #9CA3AF;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
                 </td>
               </tr>
             </table>

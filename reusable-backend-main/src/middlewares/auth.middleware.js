@@ -30,9 +30,10 @@ const authUser = async (req, _, next) => {
     if (!session) throw new ApiError(401, "Session is invalid or expired");
 
     const user = await User.findById(decoded._id).select(
-      "-password -resetPasswordToken -resetPasswordExpire",
+      "-password -resetPasswordToken -resetPasswordExpire -emailVerificationToken -emailVerificationExpire -emailChangeToken -emailChangeExpire",
     );
     if (!user) throw new ApiError(401, "User not found");
+    if (user.isDeleted) throw new ApiError(401, "User not found");
     if (!user.isActivated) throw new ApiError(403, "Account is not activated");
 
     req.user = user;
@@ -64,4 +65,12 @@ const authorizePermission =
     next();
   };
 
-export { authUser, authorizeRoles, authorizePermission, resolvePermissions };
+const requireVerifiedEmail = (req, _, next) => {
+  if (!req.user) return next(new ApiError(401, "Unauthorized"));
+  if (!req.user.isEmailVerified) {
+    return next(new ApiError(403, "Email verification required"));
+  }
+  next();
+};
+
+export { authUser, authorizeRoles, authorizePermission, requireVerifiedEmail, resolvePermissions };

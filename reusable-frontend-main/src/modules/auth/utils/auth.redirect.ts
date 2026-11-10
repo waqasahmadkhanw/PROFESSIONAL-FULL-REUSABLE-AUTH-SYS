@@ -5,47 +5,69 @@ export interface RedirectOptions {
   defaultPath?: string;
 }
 
-export const getSafeCallbackUrl = (callbackUrl?: string): string | null => {
+export const AUTH_ROLES = ["admin", "user", "teacher", "instructor"] as const;
+export type KnownAuthRole = (typeof AUTH_ROLES)[number];
+
+export const DEFAULT_AUTHENTICATED_PATH = "/dashboard";
+export const UNAUTHORIZED_PATH = "/403";
+
+/** Single source of truth for role -> dashboard route mapping. */
+export const DASHBOARD_ROUTES: Record<KnownAuthRole, string> = {
+  admin: "/admin",
+  user: "/dashboard",
+  teacher: "/dashboard",
+  instructor: "/dashboard",
+};
+
+export const isKnownAuthRole = (role?: string | null): role is KnownAuthRole =>
+  Boolean(role && (AUTH_ROLES as readonly string[]).includes(role));
+
+export const getSafeCallbackUrl = (callbackUrl?: string | null): string | null => {
   if (!callbackUrl) return null;
   try {
     const decoded = decodeURIComponent(callbackUrl);
     if (!decoded.startsWith("/") || decoded.startsWith("//") || decoded.includes("\\")) return null;
+    // Never preserve auth endpoints as post-auth destinations to avoid redirect loops/confusion.
+    if (
+      decoded === "/login" ||
+      decoded.startsWith("/login?") ||
+      decoded === "/register" ||
+      decoded === "/forgot-password" ||
+      decoded.startsWith("/reset-password") ||
+      decoded === "/verify-email" ||
+      decoded.startsWith("/verify-email?")
+    ) {
+      return null;
+    }
     return decoded;
   } catch {
     return null;
   }
 };
 
-export const getLoginRedirect = ({ callbackUrl, defaultPath = "/dashboard" }: RedirectOptions = {}) =>
+export const getLoginRedirect = ({ callbackUrl, defaultPath = DEFAULT_AUTHENTICATED_PATH }: RedirectOptions = {}) =>
   getSafeCallbackUrl(callbackUrl) ?? defaultPath;
 
-/** Role-to-route mapping is intentionally configurable and contains no domain roles. */
-export const getDashboardRedirect = (role?: UserRole): string => {
-  const roleRoutes: Record<string, string> = {
-    admin: "/dashboard",
-    manager: "/dashboard",
-    user: "/dashboard",
-  };
-  return role ? roleRoutes[role] ?? "/dashboard" : "/dashboard";
-};
-
+export const getUnauthorizedRedirect = () => UNAUTHORIZED_PATH;
 export const getLogoutRedirect = () => "/login";
 export const getRegisterRedirect = () => "/login?registered=1";
 export const getResetPasswordRedirect = () => "/login";
-export const getUnauthorizedRedirect = () => "/403";
-export const getUnauthenticatedRedirect = (callbackUrl?: string) =>
+export const getUnauthenticatedRedirect = (callbackUrl?: string | null) =>
   callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
 
-/** Role-to-dashboard route mapping for post-login redirection. */
-export const DASHBOARD_ROUTES: Record<string, string> = {
-  admin: "/dashboard/admin",
-  user: "/dashboard",
-  teacher: "/dashboard/teacher",
-  instructor: "/dashboard/instructor",
+/** Resolves the dashboard path for a given role. Unknown/unauthorized roles fall back safely. */
+export const getDashboardRoute = (role?: UserRole | null): string => {
+  if (!role) return DEFAULT_AUTHENTICATED_PATH;
+  return isKnownAuthRole(role) ? DASHBOARD_ROUTES[role] : DEFAULT_AUTHENTICATED_PATH;
 };
 
-/** Resolves the dashboard path for a given role, falling back to /dashboard. */
-export const getDashboardRoute = (role?: UserRole): string => {
-  if (!role) return "/dashboard";
-  return DASHBOARD_ROUTES[role] ?? "/dashboard";
+/** Backwards-compatible alias; uses the same centralized mapping (no duplicate role logic). */
+export const getDashboardRedirect = getDashboardRoute;
+
+export const resolvePostAuthRedirect = (role?: UserRole | null, callbackUrl?: string | null): string =>
+  getSafeCallbackUrl(callbackUrl) ?? getDashboardRoute(role);
+
+export const resolvePostVerifyRedirect = (callbackUrl?: string | null): string => {
+  const safeCallback = getSafeCallbackUrl(callbackUrl);
+  return safeCallback ? `/login?verified=1&callbackUrl=${encodeURIComponent(safeCallback)}` : "/login?verified=1";
 };

@@ -1,8 +1,9 @@
 export const accountDeletedTemplate = ({
   name = "there",
   appName = process.env.APP_NAME || "My App",
-  supportEmail = "support@example.com",
+  supportEmail = process.env.SUPPORT_EMAIL || process.env.SMTP_EMAIL || "support@example.com",
 } = {}) => {
+  const safeName = String(name || "there").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -23,11 +24,11 @@ export const accountDeletedTemplate = ({
               </tr>
               <tr>
                 <td style="padding: 32px 40px; color: #374151; font-size: 15px; line-height: 1.6;">
-                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #DC2626;">Account Deleted</h1>
-                  <p style="margin: 0 0 16px 0;">Hi ${name},</p>
-                  <p style="margin: 0 0 16px 0;">Your account has been permanently deleted. All your data has been removed from our systems.</p>
-                  <p style="margin: 0;">If you have any questions, contact us at <a href="mailto:${supportEmail}" style="color: #4F46E5; text-decoration: underline;">${supportEmail}</a>.</p>
-                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
+                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #DC2626;">Account deleted</h1>
+                  <p style="margin: 0 0 16px 0;">Hi ${safeName},</p>
+                  <p style="margin: 0 0 16px 0;">Your ${appName} account has been permanently closed. Your personal profile data has been removed or anonymized where required. Certain records (such as orders, payments, and required audit history) may be retained where legally or operationally necessary.</p>
+                  <p style="margin: 0 0 16px 0;">If you did not request this, contact <a href="mailto:${supportEmail}" style="color: #4F46E5; text-decoration: underline;">${supportEmail}</a> immediately.</p>
+                  <p style="margin: 0; font-size: 13px; color: #9CA3AF;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
                 </td>
               </tr>
             </table>

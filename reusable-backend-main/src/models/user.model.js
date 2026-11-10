@@ -49,8 +49,26 @@ const userSchema = new Schema(
       index: true,
     },
     isActivated: { type: Boolean, default: true, index: true },
+    deactivatedAt: { type: Date, default: null },
+    isDeleted: { type: Boolean, default: false, index: true },
+    deletedAt: { type: Date, default: null },
+    isEmailVerified: { type: Boolean, default: false, index: true },
+    provider: { type: String, default: "", trim: true, maxlength: 50 },
+    providerId: { type: String, default: "", trim: true, maxlength: 100 },
+    pendingEmail: {
+      type: String,
+      default: "",
+      lowercase: true,
+      trim: true,
+      maxlength: 254,
+      match: [/^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
+    },
+    emailChangeToken: { type: String, select: false },
+    emailChangeExpire: { type: Date, select: false },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpire: { type: Date, select: false },
+    emailVerificationToken: { type: String, select: false },
+    emailVerificationExpire: { type: Date, select: false },
   },
   { timestamps: true },
 );
@@ -74,6 +92,21 @@ userSchema.methods.generatePasswordResetToken = function () {
   this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   return resetToken;
+};
+
+userSchema.methods.generateEmailVerificationToken = function () {
+  const token = crypto.randomBytes(32).toString("hex");
+  this.emailVerificationToken = crypto.createHash("sha256").update(token).digest("hex");
+  this.emailVerificationExpire = Date.now() + 10 * 60 * 1000;
+  return token;
+};
+
+userSchema.methods.generateEmailChangeToken = function (newEmail) {
+  const token = crypto.randomBytes(32).toString("hex");
+  this.pendingEmail = String(newEmail || "").trim().toLowerCase();
+  this.emailChangeToken = crypto.createHash("sha256").update(token).digest("hex");
+  this.emailChangeExpire = Date.now() + 10 * 60 * 1000;
+  return token;
 };
 
 export const User = mongoose.model("User", userSchema);

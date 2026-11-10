@@ -73,7 +73,7 @@ export const resendVerifyEmailApi = (data: { email: string }) =>
   apiClient.post<ResendVerifyEmailResponse>(API_ENDPOINTS.AUTH.RESEND_VERIFY_EMAIL, data);
 
 export const googleLoginApi = (data: { credential: string }) =>
-  apiClient.post<GoogleLoginResponse>(API_ENDPOINTS.AUTH.GOOGLE_LOGIN, data);
+  apiClient.post<GoogleLoginResponse>(API_ENDPOINTS.AUTH.GOOGLE_LOGIN, data).then(mapLoginResponse);
 
 export const linkGoogleApi = (data: { credential: string }) =>
   apiClient.post<LinkGoogleResponse>(API_ENDPOINTS.AUTH.LINK_GOOGLE, data);

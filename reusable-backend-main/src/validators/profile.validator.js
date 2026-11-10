@@ -13,3 +13,8 @@ export const updateSocialLinksRules = {
   twitter: { type: "url", max: 500 },
   website: { type: "url", max: 500 },
 };
+
+export const deleteAccountRules = {
+  password: { required: true, type: "string", min: 1, max: 128 },
+  confirm: { required: true, type: "string", min: 1, max: 64 },
+};

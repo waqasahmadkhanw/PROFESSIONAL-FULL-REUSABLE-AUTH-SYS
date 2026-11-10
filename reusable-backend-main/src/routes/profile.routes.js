@@ -11,7 +11,11 @@ import { authUser } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { validateUploadedFileMiddleware } from "../middlewares/fileValidation.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
-import { updateProfileRules, updateSocialLinksRules } from "../validators/profile.validator.js";
+import {
+  updateProfileRules,
+  updateSocialLinksRules,
+  deleteAccountRules,
+} from "../validators/profile.validator.js";
 const router = Router();
 router.use(authUser);
 router.get("/", getMyProfile);
@@ -24,5 +28,5 @@ router.post(
 );
 router.delete("/avatar", removeAvatar);
 router.patch("/socials", validate(updateSocialLinksRules), updateSocialLinks);
-router.delete("/account", deleteAccount);
+router.delete("/account", validate(deleteAccountRules), deleteAccount);
 export default router;

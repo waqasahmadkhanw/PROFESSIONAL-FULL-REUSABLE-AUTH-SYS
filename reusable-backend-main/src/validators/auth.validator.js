@@ -25,3 +25,42 @@ export const forgotPasswordRules = {
 export const resetPasswordRules = {
   password: { required: true, type: "string", min: 8, max: 128 },
 };
+
+export const googleLoginRules = {
+  credential: { required: true, type: "string", min: 1 },
+};
+
+export const verifyEmailRules = {
+  token: { required: true, type: "string", min: 1 },
+};
+
+export const resendVerificationRules = {
+  email: { required: true, type: "email", max: 254 },
+};
+
+export const linkGoogleRules = {
+  credential: { required: true, type: "string", min: 1 },
+};
+
+export const unlinkGoogleRules = {
+  password: { required: true, type: "string", min: 1, max: 128 },
+};
+
+export const changeEmailRules = {
+  newEmail: { required: true, type: "email", max: 254 },
+  password: { required: true, type: "string", min: 1, max: 128 },
+};
+
+export const verifyEmailChangeRules = {
+  token: { required: true, type: "string", min: 1 },
+};
+
+export const deactivateAccountRules = {
+  password: { required: true, type: "string", min: 1, max: 128 },
+  reason: { type: "string", max: 500 },
+};
+
+export const restoreAccountRules = {
+  email: { required: true, type: "email", max: 254 },
+  password: { required: true, type: "string", min: 1, max: 128 },
+};

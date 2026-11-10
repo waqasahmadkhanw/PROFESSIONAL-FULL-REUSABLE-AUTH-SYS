@@ -117,6 +117,43 @@ export const openApiDocument = {
       ...pathItem("Login", "post", false),
       post: { ...pathItem("Login", "post", false).post, tags: ["Authentication"] },
     },
+    "/api/user/auth/google": {
+      ...pathItem("Google login", "post", false),
+      post: {
+        ...pathItem("Google login", "post", false).post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/google/link": {
+      post: {
+        ...pathItem("Link Google account", "post").post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/google/unlink": {
+      post: {
+        ...pathItem("Unlink Google account", "post").post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
     "/api/user/refresh-token": {
       ...pathItem("Refresh access token", "post", false),
       post: { ...pathItem("Refresh access token", "post", false).post, tags: ["Authentication"] },
@@ -149,11 +186,109 @@ export const openApiDocument = {
         parameters: [{ name: "token", in: "path", required: true, schema: { type: "string" } }],
       },
     },
+    "/api/user/verify-email": {
+      ...pathItem("Verify email", "post", false),
+      post: {
+        ...pathItem("Verify email", "post", false).post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/change-email": {
+      ...pathItem("Request email change", "post"),
+      post: {
+        ...pathItem("Request email change", "post").post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/verify-email-change": {
+      ...pathItem("Verify new email address", "post", false),
+      post: {
+        ...pathItem("Verify new email address", "post", false).post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/verify-email-change/{token}": {
+      ...pathItem("Verify new email address (token path)", "post", false),
+      post: {
+        ...pathItem("Verify new email address (token path)", "post", false).post,
+        tags: ["Authentication"],
+        parameters: [{ name: "token", in: "path", required: true, schema: { type: "string" } }],
+      },
+    },
+    "/api/user/deactivate": {
+      ...pathItem("Deactivate account", "post"),
+      post: {
+        ...pathItem("Deactivate account", "post").post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/restore": {
+      ...pathItem("Restore deactivated account", "post", false),
+      post: {
+        ...pathItem("Restore deactivated account", "post", false).post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
+    "/api/user/resend-verification": {
+      ...pathItem("Resend verification email", "post", false),
+      post: {
+        ...pathItem("Resend verification email", "post", false).post,
+        tags: ["Authentication"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
+    },
     "/api/user/avatar": {
       ...pathItem("Delete user avatar", "delete"),
       delete: { ...pathItem("Delete user avatar", "delete").delete, tags: ["Authentication"] },
     },
-
+    "/api/user/sessions": {
+      get: { ...pathItem("List active sessions").get, tags: ["Authentication"] },
+    },
+    "/api/user/sessions/revoke-all-except-current": {
+      post: { ...pathItem("Revoke all sessions except current", "post").post, tags: ["Authentication"] },
+    },
+    "/api/user/sessions/{id}/revoke": {
+      post: {
+        ...pathItem("Revoke a session", "post").post,
+        tags: ["Authentication"],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+      },
+    },
     "/api/profile": {
       get: { ...pathItem("Get current profile").get, tags: ["Users"] },
       patch: { ...pathItem("Update current profile", "patch").patch, tags: ["Users"] },
@@ -166,7 +301,16 @@ export const openApiDocument = {
       patch: { ...pathItem("Update social links", "patch").patch, tags: ["Users"] },
     },
     "/api/profile/account": {
-      delete: { ...pathItem("Delete current account", "delete").delete, tags: ["Users"] },
+      delete: {
+        ...pathItem("Delete current account", "delete").delete,
+        tags: ["Users"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: { type: "object" } },
+          },
+        },
+      },
     },
 
     "/api/users": {

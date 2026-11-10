@@ -9,9 +9,13 @@ import {
   RefreshCw,
   Lock,
 } from "lucide-react";
+import { useCurrentUserQuery } from "@/modules/auth";
+import { getDashboardRoute } from "@/modules/auth/utils/auth.redirect";
 
 export default function ForbiddenPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data: currentUser } = useCurrentUserQuery();
+  const dashboardHref = currentUser ? getDashboardRoute(currentUser.role) : "/login";
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -51,11 +55,11 @@ export default function ForbiddenPage() {
         {/* Quick Actions */}
         <div className="mt-8 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-center">
           <Link
-            href="/"
+            href={dashboardHref}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-600/20 transition-all hover:bg-indigo-700 active:scale-95"
           >
             <Home className="h-4 w-4" />
-            <span>Go to Dashboard</span>
+            <span>{currentUser ? "Go to Dashboard" : "Go to Sign In"}</span>
           </Link>
 
           <Link

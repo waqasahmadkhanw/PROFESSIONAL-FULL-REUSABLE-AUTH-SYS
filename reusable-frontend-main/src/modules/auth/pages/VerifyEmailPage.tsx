@@ -1,21 +1,57 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Mail } from "lucide-react";
 import { useVerifyEmail } from "@/modules/auth";
 import { Button } from "@/shared/components/ui";
 import { useToast } from "@/shared/components/ui/Toast";
+import { resolvePostVerifyRedirect } from "../utils/auth.redirect";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { verifyEmail, isPending } = useVerifyEmail();
   const { success, error } = useToast();
+  const [token, setToken] = useState("");
+  const autoVerifyAttempted = useRef(false);
 
-  const handleVerify = async (token: string) => {
+  const callbackUrl = searchParams.get("callbackUrl");
+  const tokenFromUrl = useMemo(() => searchParams.get("token")?.trim() ?? "", [searchParams]);
+
+  useEffect(() => {
+    if (tokenFromUrl) setToken(tokenFromUrl);
+  }, [tokenFromUrl]);
+
+  useEffect(() => {
+    if (!tokenFromUrl || autoVerifyAttempted.current) return;
+    autoVerifyAttempted.current = true;
+    let cancelled = false;
+    (async () => {
+      try {
+        await verifyEmail(tokenFromUrl);
+        if (cancelled) return;
+        success("Email verified successfully");
+        router.replace(resolvePostVerifyRedirect(callbackUrl));
+      } catch (err) {
+        if (!cancelled) error((err as Error)?.message ?? "Failed to verify email");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [callbackUrl, error, router, success, tokenFromUrl, verifyEmail]);
+
+  const handleVerify = async (value: string) => {
+    const normalized = value.trim();
+    if (!normalized) {
+      error("Verification token is required");
+      return;
+    }
     try {
-      await verifyEmail(token);
+      await verifyEmail(normalized);
       success("Email verified successfully");
-      router.push("/login?verified=1");
+      router.replace(resolvePostVerifyRedirect(callbackUrl));
     } catch (err) {
       error((err as Error)?.message ?? "Failed to verify email");
     }
@@ -32,20 +68,27 @@ export default function VerifyEmailPage() {
             Verify Email
           </h1>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Enter the verification code sent to your email.
+            {tokenFromUrl ? "Verifying your email link…" : "Enter the verification code sent to your email."}
           </p>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); void handleVerify(token); }}>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Verification Token</label>
-          <input type="text" className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter verification code" />
-          <Button type="button" className="w-full" disabled={isPending} onClick={() => handleVerify("")}>
+          <input
+            type="text"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Enter verification code"
+            autoComplete="one-time-code"
+          />
+          <Button type="submit" className="w-full" disabled={isPending}>
             {isPending ? "Verifying..." : "Verify Email"}
           </Button>
         </form>
         <div className="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-600 dark:border-slate-800/80 dark:text-slate-400">
-          <span>Didn't receive the code? </span>
-          <button onClick={() => router.push("/login")} className="font-semibold text-green-600 transition-colors hover:text-green-700 hover:underline dark:text-green-400 dark:hover:text-green-300">
-            Resend verification email
+          <button onClick={() => router.push("/login")} className="inline-flex items-center gap-1 font-semibold text-green-600 transition-colors hover:text-green-700 hover:underline dark:text-green-400 dark:hover:text-green-300">
+            <ArrowLeft className="h-4 w-4" />
+            Back to sign in
           </button>
         </div>
       </div>

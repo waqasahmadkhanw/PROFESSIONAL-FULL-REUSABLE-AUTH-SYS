@@ -23,11 +23,15 @@ class EmailService {
       html: welcomeEmailTemplate({ name: user.name }),
     });
   }
-  static async sendVerificationEmail(user, code) {
+  static async sendVerificationEmail(user, verifyLink, expiresInMinutes = 10) {
     return this.sendEmail({
       to: user.email,
       subject: "Verify your email",
-      html: emailVerificationTemplate(code),
+      html: emailVerificationTemplate({
+        name: user.name,
+        verifyLink,
+        expiresInMinutes,
+      }),
     });
   }
   static async sendResetPasswordEmail(user, resetLink) {
@@ -58,11 +62,26 @@ class EmailService {
       html: accountRestoredTemplate({ name: user.name }),
     });
   }
-  static async sendChangeEmailEmail(user, newEmail, token) {
+  static async sendChangeEmailEmail({ to, name, verifyLink, expiresInMinutes = 10, currentEmail }) {
     return this.sendEmail({
-      to: newEmail,
-      subject: "Verify New Email Address",
-      html: changeEmailTemplate({ name: user.name, newEmail, token }),
+      to,
+      subject: "Verify your new email address",
+      html: changeEmailTemplate({ name, verifyLink, expiresInMinutes, newEmail: to, currentEmail }),
+    });
+  }
+
+  static async sendEmailChangeNotification({ to, name, newEmail }) {
+    return this.sendEmail({
+      to,
+      subject: "Your account email was changed",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
+          <h2 style="margin: 0 0 12px;">Email address updated</h2>
+          <p style="margin: 0 0 8px;">Hi ${String(name || "there").replace(/</g, "&lt;").replace(/>/g, "&gt;")},</p>
+          <p style="margin: 0 0 8px;">Your account email address was changed to <strong>${String(newEmail || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong>.</p>
+          <p style="margin: 0;">If you did not make this change, please contact support immediately and secure your account.</p>
+        </div>
+      `,
     });
   }
   static async sendNewLoginAlert(user, { device, ip, location, time }) {
@@ -72,11 +91,14 @@ class EmailService {
       html: newLoginAlertTemplate({ name: user.name, device, ip, location, time }),
     });
   }
-  static async sendPasswordChangeEmail(user) {
+  static async sendPasswordChangeEmail(user, meta = {}) {
     return this.sendEmail({
       to: user.email,
-      subject: "Password Changed",
-      html: passwordChangeTemplate({ name: user.name }),
+      subject: "Security alert: Password changed",
+      html: passwordChangeTemplate({
+        name: user.name,
+        changedAt: meta.changedAt || new Date().toISOString(),
+      }),
     });
   }
   static async sendSuspiciousLoginAlert(user, { device, ip, location, time }) {

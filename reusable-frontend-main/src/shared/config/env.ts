@@ -56,6 +56,7 @@ export const env = Object.freeze({
     "Production-ready reusable MERN frontend template.",
   API_TIMEOUT_MS: timeout,
   MAX_UPLOAD_SIZE: maxUploadSize,
+  GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "",
   FEATURES: Object.freeze({
     AUTH: booleanEnv("NEXT_PUBLIC_FEATURE_AUTH", true),
     NOTIFICATIONS: booleanEnv("NEXT_PUBLIC_FEATURE_NOTIFICATIONS", true),

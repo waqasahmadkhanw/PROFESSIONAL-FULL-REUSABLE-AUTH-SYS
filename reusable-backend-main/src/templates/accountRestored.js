@@ -2,8 +2,10 @@ export const accountRestoredTemplate = ({
   name = "there",
   appName = process.env.APP_NAME || "My App",
   webUrl = process.env.WEB_URL || "http://localhost:3000",
-  supportEmail = "support@example.com",
+  supportEmail = process.env.SUPPORT_EMAIL || process.env.SMTP_EMAIL || "support@example.com",
 } = {}) => {
+  const safeName = String(name || "there").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const loginUrl = `${String(webUrl).replace(/\/$/, "")}/login`;
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -24,17 +26,19 @@ export const accountRestoredTemplate = ({
               </tr>
               <tr>
                 <td style="padding: 32px 40px; color: #374151; font-size: 15px; line-height: 1.6;">
-                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #16A34A;">Account Restored</h1>
-                  <p style="margin: 0 0 16px 0;">Hi ${name},</p>
-                  <p style="margin: 0 0 16px 0;">Great news! Your account has been restored and you can now sign in again.</p>
-                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 28px 0;">
+                  <h1 style="margin: 0 0 16px 0; font-size: 22px; font-weight: 600; color: #16A34A;">Account restored</h1>
+                  <p style="margin: 0 0 16px 0;">Hi ${safeName},</p>
+                  <p style="margin: 0 0 16px 0;">Your ${appName} account has been restored. You can now sign in.</p>
+                  <p style="margin: 0 0 16px 0;">For your security, previous sessions were signed out during deactivation; please sign in again.</p>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0;">
                     <tr>
                       <td align="left">
-                        <a href="${webUrl}/login" target="_blank" style="display: inline-block; background-color: #4F46E5; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 12px 28px; text-decoration: none; border-radius: 6px;">Sign In</a>
+                        <a href="${loginUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background-color: #4F46E5; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 12px 28px; text-decoration: none; border-radius: 6px;">Sign in</a>
                       </td>
                     </tr>
                   </table>
-                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
+                  <p style="margin: 0; font-size: 13px; color: #6B7280;">If you did not restore this account, contact <a href="mailto:${supportEmail}" style="color: #4F46E5; text-decoration: underline;">${supportEmail}</a> immediately.</p>
+                  <p style="margin: 16px 0 0 0; font-size: 13px; color: #9CA3AF;">&copy; ${new Date().getFullYear()} ${appName}. All rights reserved.</p>
                 </td>
               </tr>
             </table>
