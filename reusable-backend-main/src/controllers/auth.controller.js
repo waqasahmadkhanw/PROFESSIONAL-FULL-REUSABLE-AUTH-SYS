@@ -106,14 +106,26 @@ const registerUser = asyncHandler(async (req, res) => {
   const verificationToken = user.generateEmailVerificationToken();
   await user.save();
   const verificationLink = buildVerificationLink(verificationToken);
-  EmailService.sendVerificationEmail(createdUser, verificationLink, 10).catch((error) =>
-    logger.warn("Verification email failed", { error, requestId: req.id }),
-  );
+
+  let message = "User registered successfully";
+  try {
+    await EmailService.sendVerificationEmail(createdUser, verificationLink, 10);
+  } catch (error) {
+    logger.warn("Verification email failed", { error, requestId: req.id });
+    // Clear the issued token so the user can request a fresh one via resend
+    await User.updateOne(
+      { _id: user._id, emailVerificationToken: user.emailVerificationToken, isEmailVerified: { $ne: true } },
+      { $unset: { emailVerificationToken: 1, emailVerificationExpire: 1 } },
+    ).catch(() => {});
+    message = "User registered successfully. Verification email could not be sent; please use resend verification.";
+  }
+
+  // Welcome email is non-critical; send asynchronously
   EmailService.sendWelcomeEmail(createdUser).catch((error) =>
     logger.warn("Welcome email failed", { error, requestId: req.id }),
   );
 
-  return res.status(201).json(new ApiResponse(201, createdUser, "User registered successfully"));
+  return res.status(201).json(new ApiResponse(201, createdUser, message));
 });
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {

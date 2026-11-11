@@ -37,10 +37,11 @@ const existing = await User.findOne({ email });
 if (existing) {
   existing.role = "admin";
   existing.isActivated = true;
+  existing.isEmailVerified = true;
   await existing.save();
   console.log("Existing user promoted to admin:", email);
 } else {
-  await User.create({ name, email, password, role: "admin", isActivated: true });
+  await User.create({ name, email, password, role: "admin", isActivated: true, isEmailVerified: true });
   console.log("Admin created:", email);
 }
 await mongoose.connection.close();

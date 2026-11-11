@@ -14,14 +14,16 @@
 import nodemailer from "nodemailer";
 import { logger } from "../utils/logger.js";
 
+const smtpPort = Number(process.env.SMTP_PORT) || 587;
+const smtpUser = process.env.SMTP_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS;
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false, // true for 465, false for 587
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASSWORD,
-  },
+  port: smtpPort,
+  // 465 uses implicit TLS; 587/others typically use STARTTLS
+  secure: smtpPort === 465,
+  auth: smtpUser && smtpPass ? { user: smtpUser, pass: smtpPass } : undefined,
 });
 
 // Verify connection (important in production)

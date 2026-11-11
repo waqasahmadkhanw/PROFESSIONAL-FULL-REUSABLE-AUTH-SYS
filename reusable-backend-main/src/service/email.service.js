@@ -10,7 +10,7 @@ import { newLoginAlertTemplate } from "../templates/newLoginAlert.js";
 import { passwordChangeTemplate } from "../templates/passwordChange.js";
 import { suspiciousLoginAlertTemplate } from "../templates/suspiciousLoginAlert.js";
 
-const from = `"${process.env.APP_NAME || "My App"}" <${process.env.SMTP_EMAIL || process.env.EMAIL_USER || "no-reply@example.com"}>`;
+const from = `"${process.env.APP_NAME || "My App"}" <${process.env.SMTP_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER || "no-reply@example.com"}>`;
 
 class EmailService {
   static async sendEmail({ to, subject, html }) {
