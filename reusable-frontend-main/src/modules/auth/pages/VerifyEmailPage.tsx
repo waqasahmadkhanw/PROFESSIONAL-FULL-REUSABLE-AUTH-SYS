@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Mail } from "lucide-react";
-import { useVerifyEmail } from "@/modules/auth";
+import { useResendVerifyEmail, useVerifyEmail } from "@/modules/auth";
 import { Button } from "@/shared/components/ui";
 import { useToast } from "@/shared/components/ui/Toast";
 import { resolvePostVerifyRedirect } from "../utils/auth.redirect";
@@ -12,8 +12,10 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { verifyEmail, isPending } = useVerifyEmail();
+  const { resendVerifyEmail, isPending: isResending } = useResendVerifyEmail();
   const { success, error } = useToast();
   const [token, setToken] = useState("");
+  const [resendEmail, setResendEmail] = useState("");
   const autoVerifyAttempted = useRef(false);
 
   const callbackUrl = searchParams.get("callbackUrl");
@@ -57,6 +59,23 @@ export default function VerifyEmailPage() {
     }
   };
 
+  const handleResend = async () => {
+    const normalizedEmail = resendEmail.trim().toLowerCase();
+    if (!normalizedEmail) {
+      error("Enter your email to resend the verification link");
+      return;
+    }
+    try {
+      const res = await resendVerifyEmail(normalizedEmail);
+      success(
+        (res as { message?: string } | undefined)?.message ??
+          "If an unverified account exists for that email, a verification link has been sent",
+      );
+    } catch (err) {
+      error((err as Error)?.message ?? "Failed to resend verification email");
+    }
+  };
+
   return (
     <div className="w-full animate-fade-in">
       <div className="rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-10 shadow-2xl shadow-indigo-500/10 backdrop-blur-2xl transition-all duration-300 dark:border-slate-800/80 dark:bg-slate-900/80">
@@ -85,6 +104,31 @@ export default function VerifyEmailPage() {
             {isPending ? "Verifying..." : "Verify Email"}
           </Button>
         </form>
+
+        <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800/80">
+          <p className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+            Didn&apos;t receive the verification email?
+          </p>
+          <div className="space-y-3">
+            <input
+              type="email"
+              value={resendEmail}
+              onChange={(e) => setResendEmail(e.target.value)}
+              className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Enter your email address"
+              autoComplete="email"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => void handleResend()}
+              disabled={isResending}
+            >
+              {isResending ? "Sending..." : "Resend verification email"}
+            </Button>
+          </div>
+        </div>
         <div className="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-600 dark:border-slate-800/80 dark:text-slate-400">
           <button onClick={() => router.push("/login")} className="inline-flex items-center gap-1 font-semibold text-green-600 transition-colors hover:text-green-700 hover:underline dark:text-green-400 dark:hover:text-green-300">
             <ArrowLeft className="h-4 w-4" />

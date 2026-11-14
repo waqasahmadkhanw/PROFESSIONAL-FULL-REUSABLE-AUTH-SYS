@@ -21,6 +21,7 @@ import type { AuthUser } from "@/modules/auth/types";
 export interface UserNavItem {
   href: string;
   label: string;
+  description?: string;
   icon: React.ElementType;
 }
 
@@ -30,22 +31,22 @@ export interface UserNavSection {
 }
 
 export const userNavSections: UserNavSection[] = [
-  { label: "Main", items: [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }] },
+  { label: "Main", items: [{ href: "/dashboard", label: "Dashboard", description: "Overview of your account and activity", icon: LayoutDashboard }] },
   {
     label: "Account",
     items: [
-      { href: "/profile", label: "Profile", icon: UserRound },
-      { href: "/change-password", label: "Change Password", icon: Settings },
+      { href: "/profile", label: "Profile", description: "Manage your personal details and avatar", icon: UserRound },
+      { href: "/change-password", label: "Change Password", description: "Update your account password securely", icon: Settings },
     ],
   },
   {
     label: "Activity",
     items: [
-      { href: "/orders", label: "My Orders", icon: ShoppingBag },
-      { href: "/payments", label: "My Payments", icon: CreditCard },
-      { href: "/events", label: "Events", icon: CalendarDays },
-      { href: "/announcements", label: "Announcements", icon: Megaphone },
-      { href: "/notifications", label: "Notifications", icon: Bell },
+      { href: "/orders", label: "My Orders", description: "View and manage your orders", icon: ShoppingBag },
+      { href: "/payments", label: "My Payments", description: "View your payment history", icon: CreditCard },
+      { href: "/events", label: "Events", description: "Browse upcoming and past events", icon: CalendarDays },
+      { href: "/announcements", label: "Announcements", description: "Read latest site announcements", icon: Megaphone },
+      { href: "/notifications", label: "Notifications", description: "View your notifications", icon: Bell },
     ],
   },
 ];
@@ -109,7 +110,14 @@ export function UserSidebar({
                     )}
                   >
                     <item.icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-slate-900 dark:text-white" : "text-slate-500 group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-white")} />
-                    {!isDesktopCollapsed && <span>{item.label}</span>}
+                    {!isDesktopCollapsed && (
+                      <div className="flex flex-col">
+                        <span>{item.label}</span>
+                        {item.description && (
+                          <span className="text-xs text-slate-500 dark:text-slate-400">{item.description}</span>
+                        )}
+                      </div>
+                    )}
                   </Link>
                 );
               })}

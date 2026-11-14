@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
@@ -8,7 +8,7 @@ import { ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { env } from "@/shared/config/env";
 import { LoginForm } from "../components";
 import type { LoginFormValues } from "../components/LoginForm/LoginForm";
-import { useGoogleLogin, useLogin } from "../hooks";
+import { useGoogleLogin, useLogin, useResendVerifyEmail } from "../hooks";
 import { resolvePostAuthRedirect } from "../utils/auth.redirect";
 
 declare global {
@@ -37,8 +37,11 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
   const searchParams = useSearchParams();
   const { login, isPending, error } = useLogin();
   const { googleLogin, isPending: isGooglePending, error: googleError } = useGoogleLogin();
+  const { resendVerifyEmail, isPending: isResendingVerify } = useResendVerifyEmail();
 
   const [serverError, setServerError] = useState<string | null>(null);
+  const [lastAttemptEmail, setLastAttemptEmail] = useState("");
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [googleReady, setGoogleReady] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
   const googleInFlightRef = useRef(false);
@@ -47,11 +50,14 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
   const justReset = searchParams.get("reset") === "1";
   const googleClientId = env.GOOGLE_CLIENT_ID;
 
-  const redirectAfterAuth = (role?: string) => {
-    const destination = resolvePostAuthRedirect(role, searchParams.get("callbackUrl"));
-    onSuccess?.();
-    router.replace(destination);
-  };
+  const redirectAfterAuth = useCallback(
+    (role?: string) => {
+      const destination = resolvePostAuthRedirect(role, searchParams.get("callbackUrl"));
+      onSuccess?.();
+      router.replace(destination);
+    },
+    [onSuccess, router, searchParams],
+  );
 
   useEffect(() => {
     if (!googleClientId || !googleButtonRef.current) return;
@@ -120,11 +126,15 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
       cancelled = true;
       script.onload = null;
     };
-  }, [googleClientId, googleLogin, router, searchParams]);
+  }, [googleClientId, googleLogin, redirectAfterAuth]);
+
+  const displayError = serverError || googleError?.message || error?.message;
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {
       setServerError(null);
+      setResendMessage(null);
+      setLastAttemptEmail(values.email);
 
       const response = await login({
         email: values.email,
@@ -140,13 +150,38 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
     }
   };
 
-  const displayError = serverError || googleError?.message || error?.message;
+  const handleResendVerification = async () => {
+    if (!lastAttemptEmail) return;
+    try {
+      setResendMessage(null);
+      const res = await resendVerifyEmail(lastAttemptEmail);
+      setResendMessage(
+        (res as { message?: string } | undefined)?.message ??
+          "If an unverified account exists for that email, a verification link has been sent",
+      );
+    } catch (err) {
+      setServerError(
+        (err as { message?: string } | Error)?.message ??
+          "Failed to resend verification email. Please try again.",
+      );
+    }
+  };
+
+  const isVerificationRequired =
+    typeof displayError === "string" && /email verification required|verify your email/i.test(displayError);
+
+  const handleGoogleLoginClick = () => {
+    if (!googleClientId) {
+      setServerError("Google sign-in is not configured.");
+      return;
+    }
+  };
 
   return (
     <div className="w-full animate-fade-in">
       <div className="rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-10 shadow-2xl shadow-indigo-500/10 backdrop-blur-2xl transition-all duration-300 dark:border-slate-800/80 dark:bg-slate-900/80">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-400 shadow-lg shadow-indigo-500/30 transition-transform duration-300 hover:scale-105">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 via-violet-500 to-cyan-400 shadow-lg shadow-indigo-500/30 transition-transform duration-300 hover:scale-105">
             <ShieldCheck className="h-7 w-7 text-white" />
           </div>
           <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-indigo-700 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300">
@@ -164,7 +199,12 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
         {justRegistered && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-xs font-medium text-blue-900 backdrop-blur-md dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
-            <span>Account created. An administrator will activate your account shortly.</span>
+            <span>
+              Account created. Please check your email to verify your account before signing in.{" "}
+              <Link href="/verify-email" className="font-semibold underline underline-offset-2">
+                Verify or resend email
+              </Link>
+            </span>
           </div>
         )}
 
@@ -178,7 +218,26 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
         {displayError && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-900 backdrop-blur-md animate-slide-up dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
             <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
-            <span>{displayError}</span>
+            <div className="flex flex-col gap-2">
+              <span>{displayError}</span>
+              {isVerificationRequired && lastAttemptEmail ? (
+                <button
+                  type="button"
+                  onClick={() => void handleResendVerification()}
+                  disabled={isResendingVerify}
+                  className="self-start font-semibold text-indigo-600 underline-offset-2 hover:underline disabled:opacity-60 dark:text-indigo-400"
+                >
+                  {isResendingVerify ? "Sending verification email..." : "Resend verification email"}
+                </button>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        {resendMessage && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-900 backdrop-blur-md dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <span>{resendMessage}</span>
           </div>
         )}
 
@@ -186,11 +245,12 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
           onSubmit={handleSubmit}
           isLoading={isPending}
           isGoogleLoading={isGooglePending}
-          showGoogle={Boolean(googleClientId)}
+          showGoogle
+          onGoogleLogin={handleGoogleLoginClick}
           googleSlot={
             googleClientId ? (
               <div className="flex justify-center">
-                <div ref={googleButtonRef} className="min-h-[44px] w-full max-w-[320px]" />
+                <div ref={googleButtonRef} className="min-h-11 w-full max-w-[320px]" />
                 {!googleReady ? (
                   <span className="sr-only">Loading Google sign-in…</span>
                 ) : null}
@@ -200,13 +260,23 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
         />
 
         <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs text-slate-600 dark:border-slate-800/80 dark:text-slate-400">
-          <span>Don&apos;t have an account? </span>
-          <Link
-            href="/register"
-            className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300"
-          >
-            Create an account
-          </Link>
+          <div>
+            <span>Don&apos;t have an account? </span>
+            <Link
+              href="/register"
+              className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300"
+            >
+              Create an account
+            </Link>
+          </div>
+          <div className="mt-2">
+            <Link
+              href="/verify-email"
+              className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300"
+            >
+              Resend verification email
+            </Link>
+          </div>
         </div>
       </div>
     </div>
