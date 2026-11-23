@@ -85,12 +85,12 @@ export const activeSessionsApi = () =>
   apiClient.get<ActiveSessionsResponse>(API_ENDPOINTS.AUTH.ACTIVE_SESSIONS);
 
 export const revokeSessionApi = (data: { sessionId: string }) =>
-  apiClient.delete<RevokeSessionResponse>(API_ENDPOINTS.AUTH.REVOKE_SESSION(data.sessionId));
+  apiClient.post<RevokeSessionResponse>(API_ENDPOINTS.AUTH.REVOKE_SESSION(data.sessionId));
 
 export const revokeAllExceptCurrentApi = (data?: { password?: string }) =>
   apiClient.post<RevokeAllExceptCurrentResponse>(API_ENDPOINTS.AUTH.REVOKE_ALL_EXCEPT_CURRENT, data ?? {});
 
-export const restoreAccountApi = (data: { token: string }) =>
+export const restoreAccountApi = (data: { email: string; password: string }) =>
   apiClient.post<RestoreAccountResponse>(API_ENDPOINTS.AUTH.RESTORE_ACCOUNT, data);
 
 export const changeEmailApi = (data: { newEmail: string; password: string }) =>

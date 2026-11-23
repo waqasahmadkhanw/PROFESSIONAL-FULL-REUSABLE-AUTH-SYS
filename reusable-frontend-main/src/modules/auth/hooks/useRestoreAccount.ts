@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback } from "react";
 
@@ -14,8 +14,8 @@ export const useRestoreAccount = () => {
   const mutation = useRestoreAccountMutation();
 
   const restoreAccount = useCallback(
-    async (token: string) => {
-      const response: RestoreAccountResponse = await mutation.mutateAsync({ token });
+    async ({ email, password }: { email: string; password: string }) => {
+      const response: RestoreAccountResponse = await mutation.mutateAsync({ email, password });
       return response;
     },
     [mutation]

@@ -41,6 +41,7 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
 
   const [serverError, setServerError] = useState<string | null>(null);
   const [lastAttemptEmail, setLastAttemptEmail] = useState("");
+  const [verifyEmailInput, setVerifyEmailInput] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [googleReady, setGoogleReady] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
@@ -150,11 +151,12 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
     }
   };
 
-  const handleResendVerification = async () => {
-    if (!lastAttemptEmail) return;
+  const handleResendVerification = async (emailOverride?: string) => {
+    const targetEmail = (emailOverride ?? lastAttemptEmail).trim().toLowerCase();
+    if (!targetEmail) return;
     try {
       setResendMessage(null);
-      const res = await resendVerifyEmail(lastAttemptEmail);
+      const res = await resendVerifyEmail(targetEmail);
       setResendMessage(
         (res as { message?: string } | undefined)?.message ??
           "If an unverified account exists for that email, a verification link has been sent",
@@ -165,6 +167,15 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
           "Failed to resend verification email. Please try again.",
       );
     }
+  };
+
+  const handleInlineResend = async () => {
+    const email = verifyEmailInput.trim().toLowerCase() || lastAttemptEmail.trim().toLowerCase();
+    if (!email) {
+      setServerError("Enter your email to resend the verification link.");
+      return;
+    }
+    await handleResendVerification(email);
   };
 
   const isVerificationRequired =
@@ -199,12 +210,32 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
         {justRegistered && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-xs font-medium text-blue-900 backdrop-blur-md dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
-            <span>
-              Account created. Please check your email to verify your account before signing in.{" "}
-              <Link href="/verify-email" className="font-semibold underline underline-offset-2">
-                Verify or resend email
-              </Link>
-            </span>
+            <div className="flex-1">
+              <span>
+                Account created. Please check your email to verify your account before signing in.{" "}
+                <Link href="/verify-email" className="font-semibold underline underline-offset-2">
+                  Enter code
+                </Link>
+              </span>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="email"
+                  value={verifyEmailInput}
+                  onChange={(e) => setVerifyEmailInput(e.target.value)}
+                  className="min-h-11 w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-blue-500/30 dark:bg-slate-900 dark:text-white"
+                  placeholder="Email not received? Enter your email"
+                  autoComplete="email"
+                />
+                <button
+                  type="button"
+                  onClick={() => void handleInlineResend()}
+                  disabled={isResendingVerify}
+                  className="min-h-11 shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-60"
+                >
+                  {isResendingVerify ? "Sending..." : "Resend verification email"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

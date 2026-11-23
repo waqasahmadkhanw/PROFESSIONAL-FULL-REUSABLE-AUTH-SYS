@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -32,6 +32,7 @@ export default function ProfilePage() {
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
   const [showSaved, setShowSaved] = useState(false);
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export default function ProfilePage() {
               </div>
             </section>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><h2 className="font-bold text-slate-900 dark:text-white">Password</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Update your account password securely.</p><Link href="/change-password" className="mt-4 inline-flex text-sm font-semibold text-violet-700 hover:underline dark:text-violet-300">Change password</Link></div>
-            <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-5 shadow-sm dark:border-violet-900/50 dark:bg-violet-950/20"><div className="flex gap-3"><CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-violet-700 dark:text-violet-300" /><div><h2 className="font-bold text-slate-900 dark:text-white">Profile photo</h2><p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">Use a clear, professional image so your application community can recognize you.</p><button type="button" disabled={uploadAvatarMutation.isPending} onClick={() => avatarInputRef.current?.click()} className="mt-4 text-sm font-semibold text-violet-700 transition hover:text-violet-900 focus:outline-none focus:underline disabled:cursor-not-allowed disabled:opacity-60 dark:text-violet-300 dark:hover:text-violet-100">{uploadAvatarMutation.isPending ? "Uploading photo…" : "Update profile photo"}</button></div></div></section>
+            <section className="rounded-2xl border border-violet-100 bg-violet-50/70 p-5 shadow-sm dark:border-violet-900/50 dark:bg-violet-950/20"><div className="flex gap-3"><CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-violet-700 dark:text-violet-300" /><div><h2 className="font-bold text-slate-900 dark:text-white">Profile photo</h2><p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">Use a clear, professional image so your application community can recognize you.</p><button type="button" disabled={uploadAvatarMutation.isPending} onClick={() => avatarInputRef.current?.click()} className="mt-4 text-sm font-semibold text-violet-700 transition hover:text-violet-900 focus:outline-none focus:underline disabled:cursor-not-allowed disabled:opacity-60 dark:text-violet-300 dark:hover:text-violet-100">{uploadAvatarMutation.isPending ? "Uploading photoâ€¦" : "Update profile photo"}</button></div></div></section>
           </aside>
         </div>
       </div>
@@ -148,7 +149,11 @@ export default function ProfilePage() {
         cancelText="Cancel"
         loading={isDeletePending}
         destructive
-        onConfirm={deleteAccount}
+        password={deletePassword}
+        passwordLabel="Type DELETE to confirm"
+        passwordPlaceholder="DELETE"
+        onPasswordChange={setDeletePassword}
+        onConfirm={() => deleteAccount({ password: deletePassword, confirm: "DELETE" })}
       />
       
     </>

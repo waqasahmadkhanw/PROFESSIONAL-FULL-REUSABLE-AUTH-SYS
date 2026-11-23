@@ -1,19 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, User } from "lucide-react";
 import { useRestoreAccount } from "@/modules/auth";
-import { Button } from "@/shared/components/ui";
+import { Button, Input } from "@/shared/components/ui";
 import { useToast } from "@/shared/components/ui/Toast";
+
+interface RestoreFormValues {
+  email: string;
+  password: string;
+}
 
 export default function RestorePage() {
   const router = useRouter();
   const { restoreAccount, isPending } = useRestoreAccount();
   const { success, error } = useToast();
+  const [values, setValues] = useState<RestoreFormValues>({ email: "", password: "" });
 
-  const handleRestore = async (token: string) => {
+  const handleRestore = async () => {
+    const email = values.email.trim().toLowerCase();
+    if (!email) {
+      error("Email is required");
+      return;
+    }
+    if (!values.password) {
+      error("Password is required");
+      return;
+    }
     try {
-      await restoreAccount(token);
+      await restoreAccount({ email, password: values.password });
       success("Account restored successfully");
       router.push("/login");
     } catch (err) {
@@ -31,12 +47,30 @@ export default function RestorePage() {
             <div><h1 className="text-xl font-bold text-slate-900 dark:text-white">Restore Account</h1><p className="text-sm text-slate-500 dark:text-slate-400">Restore your deactivated account.</p></div>
           </div>
           <div className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-900 dark:border-green-900/20 dark:bg-green-900/10 dark:text-green-100">
-            Enter the restoration token sent to your email to restore your account.
+            Enter your account email and password to restore your account.
           </div>
           <form onSubmit={(e) => { e.preventDefault(); }} className="mt-6 space-y-4">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Restoration Token</label>
-            <input type="text" className="w-full px-4 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter restoration token" />
-            <Button type="button" className="w-full" disabled={isPending} onClick={() => restoreAccount("")}>
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">Email address</label>
+              <Input
+                type="email"
+                value={values.email}
+                onChange={(e) => setValues((v) => ({ ...v, email: e.target.value }))}
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">Password</label>
+              <Input
+                type="password"
+                value={values.password}
+                onChange={(e) => setValues((v) => ({ ...v, password: e.target.value }))}
+                placeholder="Your password"
+                autoComplete="current-password"
+              />
+            </div>
+            <Button type="button" className="w-full" loading={isPending} disabled={isPending} onClick={handleRestore}>
               {isPending ? "Restoring..." : "Restore Account"}
             </Button>
           </form>

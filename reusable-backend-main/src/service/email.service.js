@@ -10,11 +10,25 @@ import { newLoginAlertTemplate } from "../templates/newLoginAlert.js";
 import { passwordChangeTemplate } from "../templates/passwordChange.js";
 import { suspiciousLoginAlertTemplate } from "../templates/suspiciousLoginAlert.js";
 
-const from = `"${process.env.APP_NAME || "My App"}" <${process.env.SMTP_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER || "no-reply@example.com"}>`;
+const from = `"${process.env.APP_NAME || "My App"}" <${process.env.SMTP_EMAIL || process.env.EMAIL_USER || process.env.SMTP_USER || "noreply@" + (process.env.SMTP_HOST || "localhost")}>`;
 
 class EmailService {
-  static async sendEmail({ to, subject, html }) {
-    return transporter.sendMail({ from, to, subject, html });
+  static async sendEmail({ to, subject, html, text }) {
+    // Ensure we have a text version for better deliverability
+    const textVersion = text || html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    
+    return transporter.sendMail({
+      from,
+      to,
+      subject,
+      html,
+      text: textVersion,
+      headers: {
+        'X-Mailer': 'MERN-Auth-System',
+        'X-Priority': '3',
+        'Importance': 'normal',
+      },
+    });
   }
   static async sendWelcomeEmail(user) {
     return this.sendEmail({

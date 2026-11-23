@@ -40,10 +40,11 @@ export function PublicHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium transition-colors"
-                  {...(active
-                    ? { className: "text-slate-900 font-semibold dark:text-white" }
-                    : { className: "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" })}
+                  className={
+                    active
+                      ? "text-sm font-semibold text-slate-900 dark:text-white"
+                      : "text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  }
                 >
                   {link.label}
                 </Link>

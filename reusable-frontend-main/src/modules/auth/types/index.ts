@@ -1,4 +1,4 @@
-export interface ApiResponse<T = unknown> {
+﻿export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   data: T;
@@ -58,7 +58,10 @@ export type LogoutRequest = void;
 export interface ChangePasswordRequest { oldPassword: string; newPassword: string; }
 export type UpdateProfileRequest = Record<string, unknown>;
 export interface UploadAvatarRequest { avatar: File; }
-export interface DeleteAccountRequest { password?: string; }
+export interface DeleteAccountRequest {
+  password: string;
+  confirm: "DELETE";
+}
 export interface VerifyEmailRequest { token: string; }
 export interface ResendVerifyEmailRequest { email: string; }
 export interface GoogleLoginRequest { credential: string; }
@@ -66,7 +69,7 @@ export interface LinkGoogleRequest { credential: string; }
 export interface UnlinkGoogleRequest { password?: string; }
 export interface RevokeSessionRequest { sessionId: string; }
 export interface RevokeAllExceptCurrentRequest { password?: string; }
-export interface RestoreAccountRequest { token: string; }
+export interface RestoreAccountRequest { email: string; password: string; }
 export interface ChangeEmailRequest { newEmail: string; password: string; }
 export interface VerifyEmailChangeRequest { token: string; }
 export interface DeactivateAccountRequest { password: string; }

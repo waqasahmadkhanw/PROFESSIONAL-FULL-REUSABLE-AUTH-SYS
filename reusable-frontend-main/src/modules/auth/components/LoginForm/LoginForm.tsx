@@ -103,7 +103,7 @@ export default function LoginForm({
 
       {showGoogle ? (
         <>
-          <AuthDivider label="or continue with" />
+          <AuthDivider text="or continue with" />
           <SocialLogin
             providers={[{ id: "google", label: "Continue with Google" }]}
             loading={isGoogleLoading}

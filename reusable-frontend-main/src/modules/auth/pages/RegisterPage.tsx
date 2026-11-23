@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserPlus, AlertCircle } from "lucide-react";
+import { UserPlus, AlertCircle, CheckCircle2, MailWarning } from "lucide-react";
 
 import { RegisterForm } from "../components";
 import type { RegisterFormValues } from "../components/RegisterForm/RegisterForm";
@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const { register, isPending } = useRegister();
 
   const [serverError, setServerError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSubmit = async (values: RegisterFormValues) => {
     if (values.password !== values.confirmPassword) {
@@ -23,14 +24,23 @@ export default function RegisterPage() {
 
     try {
       setServerError(null);
+      setSuccessMessage(null);
 
-      await register({
+      const response = await register({
         name: `${values.firstName} ${values.lastName}`.trim(),
         email: values.email,
         password: values.password,
       });
 
-      router.push("/login?registered=1");
+      // Check if backend reported email sending failure in the message
+      const msg = (response as { message?: string } | undefined)?.message ?? "";
+      if (msg.toLowerCase().includes("could not be sent") || msg.toLowerCase().includes("verification email")) {
+        setSuccessMessage(msg);
+        // Redirect after a short delay so user can read the message
+        setTimeout(() => router.push("/login?registered=1"), 3000);
+      } else {
+        router.push("/login?registered=1");
+      }
     } catch (err) {
       setServerError(
         (err as Error)?.message ??
@@ -64,6 +74,20 @@ export default function RegisterPage() {
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-900 backdrop-blur-md animate-slide-up dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
             <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
             <span>{serverError}</span>
+          </div>
+        )}
+
+        {/* Success / Email Warning Banner */}
+        {successMessage && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-medium text-amber-900 backdrop-blur-md animate-slide-up dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+            <MailWarning className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div className="flex flex-col gap-1">
+              <span className="flex items-center gap-1 font-semibold">
+                <CheckCircle2 className="h-4 w-4" /> Account created
+              </span>
+              <span>{successMessage}</span>
+              <span className="text-[11px] opacity-80">Redirecting to sign in…</span>
+            </div>
           </div>
         )}
 

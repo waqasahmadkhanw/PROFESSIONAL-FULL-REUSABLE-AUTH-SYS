@@ -1,7 +1,9 @@
 'use client';
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { useState } from "react";
 import { Button } from '@/shared/components/ui';
+import { Input } from '@/shared/components/ui';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -16,6 +18,12 @@ interface ConfirmDialogProps {
   loading?: boolean;
   destructive?: boolean;
 
+  /** When set, shows a password input that must be typed to enable confirm. */
+  password?: string;
+  onPasswordChange?: (value: string) => void;
+  passwordLabel?: string;
+  passwordPlaceholder?: string;
+
   onConfirm: () => void;
 }
 
@@ -28,6 +36,10 @@ export function ConfirmDialog({
   cancelText = 'Cancel',
   loading = false,
   destructive = false,
+  password,
+  onPasswordChange,
+  passwordLabel = "Type DELETE to confirm",
+  passwordPlaceholder = "DELETE",
   onConfirm,
 }: ConfirmDialogProps) {
   return (
@@ -69,6 +81,21 @@ export function ConfirmDialog({
             {description}
           </AlertDialog.Description>
 
+          {password !== undefined && (
+            <div className="mt-4">
+              <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                {passwordLabel}
+              </label>
+              <Input
+                type="text"
+                value={password}
+                onChange={(e) => onPasswordChange?.(e.target.value)}
+                placeholder={passwordPlaceholder}
+                autoFocus
+              />
+            </div>
+          )}
+
           <div className="mt-6 flex justify-end gap-3">
             <AlertDialog.Cancel asChild>
               <Button
@@ -84,6 +111,7 @@ export function ConfirmDialog({
                 variant={destructive ? 'danger' : 'primary'}
                 size="md"
                 loading={loading}
+                disabled={password !== undefined && password !== "DELETE"}
                 onClick={onConfirm}
               >
                 {confirmText}

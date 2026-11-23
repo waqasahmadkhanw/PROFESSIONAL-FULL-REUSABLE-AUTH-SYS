@@ -15,12 +15,23 @@ export const emailVerificationTemplate = ({
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Verify your email - ${appName}</title>
+      <style>
+        body { margin: 0; padding: 0; background-color: #F4F5F7; }
+        table { border-collapse: collapse; }
+        img { border: 0; outline: none; text-decoration: none; }
+      </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #F4F5F7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F4F5F7; padding: 40px 20px;">
         <tr>
           <td align="center">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; background-color: #FFFFFF; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+              <!-- Preheader text for inbox preview (hidden) -->
+              <tr>
+                <td style="display:none!important; visibility:hidden; mso-hide:all; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
+                  Please verify your email address to complete your registration with ${appName}
+                </td>
+              </tr>
               <tr>
                 <td style="padding: 32px 40px 24px 40px; text-align: left; border-bottom: 1px solid #F0F0F0;">
                   <span style="font-size: 20px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">${appName}</span>
@@ -90,5 +101,5 @@ export const emailVerificationTemplate = ({
       </table>
     </body>
     </html>
-  `;
+ `;
 };

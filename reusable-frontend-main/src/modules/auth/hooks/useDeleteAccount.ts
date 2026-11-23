@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+﻿import { useCallback } from "react";
 
 import { useAppDispatch } from "@/shared/store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,9 +14,9 @@ export const useDeleteAccount = () => {
 
   const mutation = useDeleteAccountMutation();
 
-  const handleDeleteAccount = useCallback(async () => {
+  const handleDeleteAccount = useCallback(async (data: { password: string; confirm: "DELETE" }) => {
     try {
-      await mutation.mutateAsync({});
+      await mutation.mutateAsync(data);
     } finally {
       queryClient.removeQueries({ queryKey: ["auth"] });
       clearCsrfToken();
