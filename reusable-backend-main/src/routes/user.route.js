@@ -29,7 +29,7 @@ import { authUser, requireVerifiedEmail } from "../middlewares/auth.middleware.j
 import { upload } from "../middlewares/multer.middleware.js";
 import { validateUploadedFileMiddleware } from "../middlewares/fileValidation.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
-import { authRateLimiter, registerRateLimiter } from "../middlewares/rateLimit.middleware.js";
+import { authRateLimiter, registerRateLimiter, verificationRateLimiter } from "../middlewares/rateLimit.middleware.js";
 import {
   registerRules,
   loginRules,
@@ -64,7 +64,7 @@ router.patch("/account", authUser, updateAccountDetails);
 router.post("/logout", logoutUser);
 router.post("/forgot-password", authRateLimiter, validate(forgotPasswordRules), forgotPassword);
 router.post("/reset-password/:token", authRateLimiter, validate(resetPasswordRules), resetPassword);
-router.post("/verify-email", authRateLimiter, validate(verifyEmailRules), verifyEmail);
+router.post("/verify-email", verificationRateLimiter, validate(verifyEmailRules), verifyEmail);
 router.post(
   "/change-email",
   authRateLimiter,
@@ -74,19 +74,19 @@ router.post(
 );
 router.post(
   "/verify-email-change",
-  authRateLimiter,
+  verificationRateLimiter,
   validate(verifyEmailChangeRules),
   verifyEmailChange,
 );
 router.post(
   "/verify-email-change/:token",
-  authRateLimiter,
+  verificationRateLimiter,
   validate(verifyEmailChangeRules),
   verifyEmailChange,
 );
 router.post(
   "/resend-verification",
-  authRateLimiter,
+  verificationRateLimiter,
   validate(resendVerificationRules),
   resendVerificationEmail,
 );

@@ -183,7 +183,9 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
 
   const handleGoogleLoginClick = () => {
     if (!googleClientId) {
-      setServerError("Google sign-in is not configured.");
+      setServerError(
+        "Google sign-in is not configured. Set NEXT_PUBLIC_GOOGLE_CLIENT_ID in the frontend .env and GOOGLE_CLIENT_ID in the backend .env to enable it.",
+      );
       return;
     }
   };

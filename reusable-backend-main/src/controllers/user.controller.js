@@ -35,12 +35,18 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   const normalizedEmail = email?.trim().toLowerCase();
   if (!name?.trim() || !normalizedEmail) throw new ApiError(400, "Name and email are required");
 
-  const exists = await User.findOne({ email: normalizedEmail, _id: { $ne: req.user._id } });
-  if (exists) throw new ApiError(409, "Email is already in use");
+  // Email changes must go through the verified change-email flow so the new
+  // address is proven before it becomes active. Only the name is updated here.
+  if (normalizedEmail !== (req.user.email || "").trim().toLowerCase()) {
+    throw new ApiError(
+      400,
+      "Email changes must use the verified change-email flow (POST /user/change-email).",
+    );
+  }
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { $set: { name: name.trim(), email: normalizedEmail } },
+    { $set: { name: name.trim() } },
     { new: true, runValidators: true },
   ).select("-password -resetPasswordToken -resetPasswordExpire");
 

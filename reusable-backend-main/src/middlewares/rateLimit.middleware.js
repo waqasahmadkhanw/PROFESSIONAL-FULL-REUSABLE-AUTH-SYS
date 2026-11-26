@@ -46,6 +46,17 @@ const registerWindowMs = toPositiveInteger(
 );
 const registerMax = toPositiveInteger(process.env.REGISTER_RATE_LIMIT, 20);
 
+// Email-verification endpoints get their own budget so that legitimate retries
+// (resend + verify + re-verify) do not exhaust the tight login brute-force limit.
+const verificationWindowMs = toPositiveInteger(
+  process.env.VERIFICATION_RATE_LIMIT_WINDOW_MS,
+  15 * 60 * 1000,
+);
+const verificationMax = toPositiveInteger(
+  process.env.VERIFICATION_RATE_LIMIT,
+  20,
+);
+
 export const globalRateLimiter = createLimiter({
   windowMs: globalWindowMs,
   max: globalMax,
@@ -65,4 +76,11 @@ export const registerRateLimiter = createLimiter({
   max: registerMax,
   prefix: "register",
   message: "Too many registration attempts. Please try again later.",
+});
+
+export const verificationRateLimiter = createLimiter({
+  windowMs: verificationWindowMs,
+  max: verificationMax,
+  prefix: "verification",
+  message: "Too many verification attempts. Please try again later.",
 });
