@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
     CURRENT_USER: "/user/me",
     VERIFY_EMAIL: "/user/verify-email",
     GOOGLE_LOGIN: "/user/auth/google",
+    GOOGLE_CONFIG: "/user/auth/google/config",
     RESEND_VERIFY_EMAIL: "/user/resend-verification",
     LINK_GOOGLE: "/user/google/link",
     UNLINK_GOOGLE: "/user/google/unlink",

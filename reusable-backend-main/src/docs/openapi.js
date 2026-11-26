@@ -130,6 +130,13 @@ export const openApiDocument = {
         },
       },
     },
+    "/api/user/auth/google/config": {
+      ...pathItem("Google config", "get", false),
+      get: {
+        ...pathItem("Google config", "get", false).get,
+        tags: ["Authentication"],
+      },
+    },
     "/api/user/google/link": {
       post: {
         ...pathItem("Link Google account", "post").post,

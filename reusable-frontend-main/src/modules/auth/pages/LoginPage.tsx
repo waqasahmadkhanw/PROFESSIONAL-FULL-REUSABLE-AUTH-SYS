@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 
 import { env } from "@/shared/config/env";
+import { API_ENDPOINTS } from "@/shared/api/endpoints";
 import { LoginForm } from "../components";
 import type { LoginFormValues } from "../components/LoginForm/LoginForm";
 import { useGoogleLogin, useLogin, useResendVerifyEmail } from "../hooks";
@@ -44,12 +45,34 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
   const [verifyEmailInput, setVerifyEmailInput] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [googleReady, setGoogleReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [fetchedGoogleClientId, setFetchedGoogleClientId] = useState("");
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
   const googleInFlightRef = useRef(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (env.GOOGLE_CLIENT_ID) return;
+    let cancelled = false;
+    fetch(`${env.API_URL}${API_ENDPOINTS.AUTH.GOOGLE_CONFIG}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        const id = data?.data?.clientId;
+        if (typeof id === "string" && id.trim()) setFetchedGoogleClientId(id.trim());
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const justRegistered = searchParams.get("registered") === "1";
   const justReset = searchParams.get("reset") === "1";
-  const googleClientId = env.GOOGLE_CLIENT_ID;
+  const googleClientId = env.GOOGLE_CLIENT_ID || fetchedGoogleClientId;
 
   const redirectAfterAuth = useCallback(
     (role?: string) => {
@@ -184,7 +207,7 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
   const handleGoogleLoginClick = () => {
     if (!googleClientId) {
       setServerError(
-        "Google sign-in is not configured. Set NEXT_PUBLIC_GOOGLE_CLIENT_ID in the frontend .env and GOOGLE_CLIENT_ID in the backend .env to enable it.",
+        "Google sign-in is not configured. Add NEXT_PUBLIC_GOOGLE_CLIENT_ID to the frontend .env and GOOGLE_CLIENT_ID to the backend .env, then restart both dev servers so the values are loaded.",
       );
       return;
     }
@@ -281,7 +304,7 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
           showGoogle
           onGoogleLogin={handleGoogleLoginClick}
           googleSlot={
-            googleClientId ? (
+            mounted && googleClientId ? (
               <div className="flex justify-center">
                 <div ref={googleButtonRef} className="min-h-11 w-full max-w-[320px]" />
                 {!googleReady ? (

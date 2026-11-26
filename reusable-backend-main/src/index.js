@@ -18,8 +18,16 @@ try {
   stopTempCleanup = startTempCleanup();
 
   server = app.listen(port, () => {
+    const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_IDS);
+    logger.info("api_started", {
+      port,
+      environment: process.env.NODE_ENV || "development",
+      google_oauth: googleConfigured ? "configured" : "not_configured",
+      google_oauth_hint: googleConfigured
+        ? undefined
+        : "Set GOOGLE_CLIENT_ID in backend .env and restart the server to enable Google sign-in",
+    });
     setAcceptingTraffic(true);
-    logger.info("api_started", { port, environment: process.env.NODE_ENV || "development" });
   });
 
   const shutdown = createGracefulShutdown({ server, stopTempCleanup });

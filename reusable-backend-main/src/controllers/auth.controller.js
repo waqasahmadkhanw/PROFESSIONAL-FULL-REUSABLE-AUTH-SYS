@@ -853,6 +853,15 @@ const restoreAccount = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user: restoredUser }, "Account restored successfully"));
 });
 
+const getGoogleConfig = asyncHandler(async (_req, res) => {
+  const raw = process.env.GOOGLE_CLIENT_IDS || process.env.GOOGLE_CLIENT_ID || "";
+  const clientId = String(raw)
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean)[0] || "";
+  return res.status(200).json(new ApiResponse(200, { clientId }, "Google config fetched"));
+});
+
 export {
   registerUser,
   changeCurrentPassword,
@@ -870,4 +879,5 @@ export {
   unlinkGoogle,
   logoutUser,
   refreshAccessToken,
+  getGoogleConfig,
 };

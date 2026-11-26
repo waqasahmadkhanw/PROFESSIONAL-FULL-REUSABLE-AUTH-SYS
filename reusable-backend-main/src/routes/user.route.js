@@ -24,6 +24,7 @@ import {
   resetPassword,
   verifyEmail,
   resendVerificationEmail,
+  getGoogleConfig,
 } from "../controllers/auth.controller.js";
 import { authUser, requireVerifiedEmail } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -57,6 +58,7 @@ router.post(
 );
 router.post("/login", authRateLimiter, validate(loginRules), loginUser);
 router.post("/auth/google", authRateLimiter, validate(googleLoginRules), googleLogin);
+router.get("/auth/google/config", getGoogleConfig);
 router.post("/refresh-token", authRateLimiter, refreshAccessToken);
 router.get("/me", authUser, getCurrentUser);
 router.patch("/password", authUser, validate(changePasswordRules), changeCurrentPassword);
